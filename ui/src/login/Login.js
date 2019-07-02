@@ -10,10 +10,10 @@ const LoginSchema = Yup.object().shape({
 const Login = () => (
   <div className="p-strip">
     <div className="row">
-      <div class="col-8 col-start-large-3">
-        <div class="p-card">
-          <header class="p-card__header">
-            <h1 class="p-heading--four">Login</h1>
+      <div className="col-8 col-start-large-3">
+        <div className="p-card">
+          <header className="p-card__header">
+            <h1 className="p-heading--four">Login</h1>
           </header>
           <Formik
             initialValues={{
@@ -22,8 +22,41 @@ const Login = () => (
             }}
             validationSchema={LoginSchema}
             onSubmit={values => {
-              // same shape as initial values
-              console.log(values);
+              const ws = new WebSocket("ws://maas.local:5240/MAAS/ws");
+              ws.onmessage = event => {
+                console.log("onmessage", event.data);
+              };
+              ws.onopen = event => {
+                ws.send(
+                  JSON.stringify({
+                    type: 0,
+                    request_id: 1,
+                    method: "general.version"
+                  })
+                );
+              };
+              // var url = "http://maas.local:5240/MAAS/accounts/login/";
+              // fetch(url, {
+              //   method: "GET",
+              //   mode: "no-cors",
+              //   credentials: "include"
+              // })
+              //   .then(response => {
+              //     console.log("Success:", response);
+              //   })
+              //   .catch(error => console.error("Error:", error));
+              // fetch(url, {
+              //   method: "POST",
+              //   mode: "no-cors",
+              //   credentials: "include",
+              //   body: Object.keys(values)
+              //     .map(key => key + "=" + values[key])
+              //     .join("&")
+              // })
+              //   .then(response => {
+              //     // console.log("Success:", response);
+              //   })
+              //   .catch(error => console.error("Error:", error));
             }}
           >
             {({ errors, touched }) => (
