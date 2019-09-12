@@ -14,6 +14,7 @@ export const App = () => {
   useEffect(() => {
     // Connect the websocket before anything else in the app can be done.
     dispatch(websocket.connect());
+    dispatch({ type: "FETCH_CSRF_TOKEN" });
   }, [dispatch]);
 
   if (connectionError) {

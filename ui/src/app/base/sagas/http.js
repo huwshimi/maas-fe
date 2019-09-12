@@ -3,6 +3,7 @@ import { call, put, takeLatest } from "redux-saga/effects";
 import getCookie from "./utils";
 
 const SCRIPTS_API = `/MAAS/api/2.0/scripts/`;
+const CSRF_URL = "/MAAS/account/csrf/";
 
 const DEFAULT_HEADERS = {
   "Content-Type": "application/json",
@@ -10,6 +11,18 @@ const DEFAULT_HEADERS = {
 };
 
 export const api = {
+  csrf: {
+    fetch: () => {
+      return fetch(CSRF_URL, {
+        method: "POST"
+      }).then(response => {
+        if (!response.ok) {
+          throw Error(response.statusText);
+        }
+        return response.json();
+      });
+    }
+  },
   scripts: {
     fetch: csrftoken => {
       const headers = { ...DEFAULT_HEADERS, "X-CSRFToken": csrftoken };
@@ -35,6 +48,23 @@ export const api = {
     }
   }
 };
+
+export function* fetchCSRFToken() {
+  let response;
+  try {
+    yield put({ type: `FETCH_CSRF_TOKEN_START` });
+    response = yield call(api.csrf.fetch);
+    yield put({
+      type: `FETCH_CSRF_TOKEN_SUCCESS`,
+      payload: response
+    });
+  } catch (error) {
+    yield put({
+      type: `FETCH_CSRF_TOKEN_ERROR`,
+      error: error.message
+    });
+  }
+}
 
 export function* fetchScriptsSaga() {
   const csrftoken = yield call(getCookie, "csrftoken");
@@ -71,9 +101,14 @@ export function* deleteScriptSaga(action) {
   }
 }
 
+export function* watchFetchCSRF() {
+  yield takeLatest("FETCH_CSRF_TOKEN", fetchCSRFToken);
+}
+
 export function* watchFetchScripts() {
   yield takeLatest("FETCH_SCRIPTS", fetchScriptsSaga);
 }
+
 export function* watchDeleteScript() {
   yield takeLatest("DELETE_SCRIPT", deleteScriptSaga);
 }
