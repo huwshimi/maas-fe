@@ -9,6 +9,7 @@ import DhcpList from "app/settings/views/Dhcp/DhcpList";
 import DnsForm from "app/settings/views/Network/DnsForm";
 import General from "app/settings/views/Configuration/General";
 import KernelParameters from "app/settings/views/Configuration/KernelParameters";
+import MachineList from "app/settings/views/Machines/MachineList";
 import NetworkDiscoveryForm from "app/settings/views/Network/NetworkDiscoveryForm";
 import NtpForm from "app/settings/views/Network/NtpForm";
 import ProxyForm from "app/settings/views/Network/ProxyForm";
@@ -45,6 +46,7 @@ const Routes = () => (
     <Route exact path="/users/add" component={UserAdd} />
     <Route exact path="/users/:id/edit" component={UserEdit} />
     <Route exact path="/storage" component={StorageForm} />
+    <Route exact path="/machines" component={MachineList} />
     <Route exact path="/network/proxy" component={ProxyForm} />
     <Route exact path="/network/dns" component={DnsForm} />
     <Route exact path="/network/ntp" component={NtpForm} />
