@@ -78,12 +78,20 @@ const generateRows = (
   rows,
   currentPage,
   setCurrentPage,
-  sortable
+  sortable,
+  preSort
 ) => {
   // Clone the rows so we can restore the original order.
   const sortedRows = [...rows];
   if (sortable && currentSortKey) {
     sortedRows.sort((a, b) => {
+      let preValue;
+      if (preSort) {
+        preValue = preSort(a, b);
+      }
+      if (preSort && preValue !== 0) {
+        return preValue;
+      }
       if (!a.sortData || !b.sortData) {
         return 0;
       }
@@ -138,6 +146,7 @@ const MainTable = ({
   expanding,
   headers,
   paginate,
+  preSort,
   rows,
   responsive,
   sortable,
@@ -186,7 +195,8 @@ const MainTable = ({
             rows,
             currentPage,
             setCurrentPage,
-            sortable
+            sortable,
+            preSort
           )}
       </Table>
       {paginate && rows && rows.length && (

@@ -8,7 +8,10 @@ const PaginationItem = ({ number, onClick, isActive = false }) => (
       className={classNames("p-pagination__link", {
         "is-active": isActive
       })}
-      onClick={onClick}
+      onClick={() => {
+        window.scrollTo(0, 0);
+        onClick();
+      }}
     >
       {number}
     </button>

@@ -13,7 +13,7 @@ const Settings = () => {
   }, [dispatch]);
 
   return (
-    <Section title="Settings" sidebar={<SettingsNav />}>
+    <Section title="Settings" xsidebar={<SettingsNav />}>
       <Routes />
     </Section>
   );
