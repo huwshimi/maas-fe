@@ -7,4 +7,10 @@ module.exports = function(app) {
       target: process.env.REACT_APP_BASE_URL
     })
   );
+  app.use(
+    proxy("/MAAS/ws", {
+      target: process.env.REACT_APP_BASE_URL,
+      ws: true
+    })
+  );
 };

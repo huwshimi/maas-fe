@@ -41,12 +41,7 @@ const buildWsUrl = csrftoken => {
  */
 export function createConnection(csrftoken) {
   return new Promise((resolve, reject) => {
-    let url;
-    if (process.env.REACT_APP_WEBSOCKET_URL) {
-      url = `${process.env.REACT_APP_WEBSOCKET_URL}?csrftoken=${csrftoken}`;
-    } else {
-      url = buildWsUrl(csrftoken);
-    }
+    const url = buildWsUrl(csrftoken);
     const socketClient = new WebSocketClient(url);
     socketClient.socket.onopen = () => {
       resolve(socketClient);

@@ -23,7 +23,6 @@ const Login = () => {
               }}
               validationSchema={LoginSchema}
               onSubmit={values => {
-                console.log("values", values);
                 var url = "/MAAS/accounts/login/";
                 fetch(url, {
                   method: "POST",
