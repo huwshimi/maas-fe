@@ -6,11 +6,11 @@ exports[`CopyButton  can render 1`] = `
 >
   <Button
     appearance="base"
-    className="is-small u-justify-table-icon u-no-margin--right"
+    className="is-small u-no-margin--right"
     onClick={[Function]}
   >
     <button
-      className="is-small u-justify-table-icon u-no-margin--right p-button--base"
+      className="is-small u-no-margin--right p-button--base"
       onClick={[Function]}
     >
       <i
