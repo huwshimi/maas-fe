@@ -133,6 +133,7 @@ export function* handleMessage(socketChannel, socketClient) {
           error
         });
       } else {
+        yield put({ type: `REQUEST_SUCCESS`, payload: response });
         yield put({ type: `${action_type}_SUCCESS`, payload: response.result });
       }
     }
@@ -187,7 +188,8 @@ export function* sendMessage(socketClient, { meta, payload, type }) {
         yield call(
           [socketClient, socketClient.send],
           type,
-          buildMessage(meta, param)
+          buildMessage(meta, param),
+          meta && meta.request_id
         );
         // Ensure server has synced before sending next message,
         // important for dependant config like commissioning_distro_series
@@ -201,7 +203,8 @@ export function* sendMessage(socketClient, { meta, payload, type }) {
       yield call(
         [socketClient, socketClient.send],
         type,
-        buildMessage(meta, params)
+        buildMessage(meta, params),
+        meta && meta.request_id
       );
     }
   } catch (error) {

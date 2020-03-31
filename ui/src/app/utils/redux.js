@@ -1,4 +1,5 @@
 import { createAction, createReducer } from "@reduxjs/toolkit";
+import { nanoid } from "nanoid";
 
 /**
  * Generates async actions for 'start', 'error' and 'success' events,
@@ -35,7 +36,8 @@ export const createStandardActions = name => {
   action.create = createAction(`CREATE_${name.toUpperCase()}`, params => ({
     meta: {
       model: name,
-      method: "create"
+      method: "create",
+      request_id: nanoid()
     },
     payload: {
       params

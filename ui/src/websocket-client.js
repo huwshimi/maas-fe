@@ -1,3 +1,4 @@
+import { nanoid } from "nanoid";
 import ReconnectingWebSocket from "reconnecting-websocket";
 
 class WebSocketClient {
@@ -8,22 +9,12 @@ class WebSocketClient {
   }
 
   /**
-   * Get the next available request id.
-   * @returns {Integer} An id.
-   */
-  _getId() {
-    const id = this._nextId;
-    this._nextId++;
-    return id;
-  }
-
-  /**
    * Store a mapping of id to action type.
    * @param {String} action - A base Redux action type.
    * @returns {Integer} The id that was created.
    */
-  _addRequest(action) {
-    const id = this._getId();
+  _addRequest(action, requestID) {
+    const id = requestID || nanoid();
     this._requests.set(id, action);
     return id;
   }
@@ -42,8 +33,8 @@ class WebSocketClient {
    * @param {String} action - A base Redux action type.
    * @param {Object} message - The message content.
    */
-  send(action, message) {
-    const id = this._addRequest(action);
+  send(action, message, requestID) {
+    const id = this._addRequest(action, requestID);
     const payload = {
       ...message,
       request_id: id

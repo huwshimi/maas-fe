@@ -1,9 +1,10 @@
 import { useDispatch, useSelector } from "react-redux";
 import * as Yup from "yup";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { resourcepool as poolActions } from "app/base/actions";
 import { resourcepool as poolSelectors } from "app/base/selectors";
+import { requests as requestsSelectors } from "app/base/selectors";
 import { useAddMessage } from "app/base/hooks";
 import { useWindowTitle } from "app/base/hooks";
 import FormCard from "app/base/components/FormCard";
@@ -22,6 +23,10 @@ export const PoolForm = ({ pool }) => {
   const saving = useSelector(poolSelectors.saving);
   const errors = useSelector(poolSelectors.errors);
   const [savingPool, setSaving] = useState();
+  const [createdID, setCreatedID] = useState();
+  const createdResponse = useSelector(state =>
+    requestsSelectors.get(state, createdID)
+  );
 
   useAddMessage(
     saved,
@@ -48,6 +53,12 @@ export const PoolForm = ({ pool }) => {
 
   useWindowTitle(title);
 
+  useEffect(() => {
+    if (createdID && createdResponse) {
+      console.log("You just created a pool with the id: ", createdResponse);
+    }
+  }, [createdID, createdResponse]);
+
   return (
     <FormCard sidebar={false} title={title}>
       <FormikForm
@@ -67,7 +78,8 @@ export const PoolForm = ({ pool }) => {
             values.id = pool.id;
             dispatch(poolActions.update(values));
           } else {
-            dispatch(poolActions.create(values));
+            const action = dispatch(poolActions.create(values));
+            setCreatedID(action.meta.request_id);
           }
           setSaving(values.name);
         }}
