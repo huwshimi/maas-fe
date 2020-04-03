@@ -484,7 +484,7 @@ const MachineList = () => {
     dispatch(tagActions.fetch());
     dispatch(userActions.fetch());
     dispatch(zoneActions.fetch());
-  }, [dispatch, machinesLoaded]);
+  }, [dispatch]);
 
   // Update sort parameters depending on whether the same sort key was clicked.
   const updateSort = (newSortKey) => {
@@ -600,7 +600,7 @@ const MachineList = () => {
       {errorMessage ? (
         <Notification type="negative">{errorMessage}</Notification>
       ) : null}
-      {machinesLoaded && (
+      {(machinesLoading || machinesLoaded) && (
         <Row>
           <Col size={12}>
             <MainTable

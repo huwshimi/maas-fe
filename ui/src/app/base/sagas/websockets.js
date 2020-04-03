@@ -97,6 +97,38 @@ export function* handleNotifyMessage(response) {
   });
 }
 
+const batchRequests = new Map();
+
+function queueBatch(params, requestIDs, action) {
+  // If the action has a limit then it is a batch request.
+  if (params && params.limit) {
+    requestIDs.forEach((id) => {
+      batchRequests.set(id, action);
+    });
+  }
+}
+
+function* handleBatch(response) {
+  let batchRequest = batchRequests.get(response.request_id);
+  if (batchRequest) {
+    // This is a batch request so check if we received a full batch, if so
+    // then send another request.
+    if (batchRequest.payload.params.limit === response.result.length) {
+      const { result } = response;
+      // Clean up the previous request.
+      batchRequests.delete(response.request_id);
+      // Set the next batch to start at the last id we received.
+      batchRequest.payload.params.start = result[result.length - 1].id;
+      // Send the new request.
+      yield put(batchRequest);
+    } else {
+      // If we didn't receive a full batch then we don't need to request
+      // any more data so dispatch the complete action.
+      yield put({ type: `${batchRequest.type}_COMPLETE` });
+    }
+  }
+}
+
 /**
  * Handle messages received over the WebSocket.
  */
@@ -117,6 +149,7 @@ export function* handleMessage(socketChannel, socketClient) {
         [socketClient, socketClient.getRequest],
         response.request_id
       );
+      yield call(handleBatch, response);
       if (response.error) {
         let error;
         try {
@@ -166,12 +199,13 @@ const buildMessage = (meta, params) => {
 /**
  * Send WebSocket messages via the client.
  */
-export function* sendMessage(socketClient, { meta, payload, type }) {
-  const params = payload ? payload.params : null;
+export function* sendMessage(socketClient, action) {
+  const { meta, payload, type } = action;
+  let params = payload ? payload.params : null;
 
   const { method, model } = meta;
   // If method is 'list' and data has loaded, do not fetch again.
-  if (method.endsWith("list")) {
+  if (method.endsWith("list") && (!params || !params.start)) {
     const loaded = yield select(isLoaded, model);
     if (loaded) {
       return;
@@ -179,16 +213,18 @@ export function* sendMessage(socketClient, { meta, payload, type }) {
   }
 
   yield put({ type: `${type}_START` });
+  let requestIDs = [];
   try {
     if (params && Array.isArray(params)) {
       // We deliberately do not yield in parallel here with 'all'
       // to avoid races for dependant config.
       for (let param of params) {
-        yield call(
+        let id = yield call(
           [socketClient, socketClient.send],
           type,
           buildMessage(meta, param)
         );
+        requestIDs.push(id);
         // Ensure server has synced before sending next message,
         // important for dependant config like commissioning_distro_series
         // and default_min_hwe_kernel.
@@ -198,12 +234,14 @@ export function* sendMessage(socketClient, { meta, payload, type }) {
         yield take(`${type}_NOTIFY`);
       }
     } else {
-      yield call(
+      let id = yield call(
         [socketClient, socketClient.send],
         type,
         buildMessage(meta, params)
       );
+      requestIDs.push(id);
     }
+    queueBatch(params, requestIDs, action);
   } catch (error) {
     yield put({ type: `${type}_ERROR`, error });
   }
