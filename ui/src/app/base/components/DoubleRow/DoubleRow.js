@@ -85,7 +85,6 @@ DoubleRow.propTypes = {
   icon: PropTypes.node,
   iconSpace: PropTypes.bool,
   menuClassName: PropTypes.string,
-  menuLinks: TableMenu.propTypes.links,
   menuTitle: PropTypes.string,
   onToggleMenu: PropTypes.func,
   primary: PropTypes.node,
@@ -97,4 +96,4 @@ DoubleRow.propTypes = {
   secondaryClassName: PropTypes.string,
 };
 
-export default DoubleRow;
+export default React.memo(DoubleRow);

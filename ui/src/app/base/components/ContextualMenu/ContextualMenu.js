@@ -2,7 +2,7 @@ import { Button } from "@canonical/react-components";
 import classNames from "classnames";
 import { nanoid } from "@reduxjs/toolkit";
 import PropTypes from "prop-types";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import usePortal from "react-useportal";
 
 const getPositionStyle = (position, wrapper, constrainPanelWidth) => {
@@ -82,9 +82,15 @@ const ContextualMenu = ({
   const id = useRef(nanoid());
   const wrapper = useRef(null);
   const hasToggle = hasToggleIcon || toggleLabel;
-  const { openPortal, closePortal, isOpen, Portal } = usePortal({
-    isOpen: !hasToggle,
-  });
+  // const { openPortal, closePortal, isOpen, Portal } = usePortal({
+  //   isOpen: !hasToggle,
+  // });
+  const { openPortal, closePortal, isOpen, Portal } = {
+    openPortal: () => {},
+    closePortal: () => {},
+    isOpen: false,
+    Portal: () => {},
+  };
   const labelNode = toggleLabel ? <span>{toggleLabel}</span> : null;
   const wrapperClass = classNames(
     className,
@@ -92,6 +98,7 @@ const ContextualMenu = ({
       .filter(Boolean)
       .join("--")
   );
+  const styleNode = positionNode || wrapper;
 
   useEffect(() => {
     onToggleMenu && onToggleMenu(isOpen);
@@ -138,11 +145,7 @@ const ContextualMenu = ({
         <Portal>
           <span
             className={wrapperClass}
-            style={getPositionStyle(
-              position,
-              positionNode || wrapper,
-              constrainPanelWidth
-            )}
+            style={getPositionStyle(position, styleNode, constrainPanelWidth)}
           >
             <span
               className={classNames(
@@ -206,4 +209,4 @@ ContextualMenu.propTypes = {
   toggleLabelFirst: PropTypes.bool,
 };
 
-export default ContextualMenu;
+export default React.memo(ContextualMenu);

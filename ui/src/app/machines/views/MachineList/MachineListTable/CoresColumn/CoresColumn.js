@@ -7,13 +7,13 @@ import ScriptStatus from "app/base/components/ScriptStatus";
 import Tooltip from "app/base/components/Tooltip";
 import { machine as machineSelectors } from "app/base/selectors";
 
+const formatShortArch = (arch) =>
+  arch.includes("/generic") ? arch.split("/")[0] : arch;
+
 const CoresColumn = ({ onToggleMenu, systemId }) => {
   const machine = useSelector((state) =>
     machineSelectors.getBySystemId(state, systemId)
   );
-
-  const formatShortArch = (arch) =>
-    arch.includes("/generic") ? arch.split("/")[0] : arch;
 
   return (
     <DoubleRow
@@ -46,4 +46,4 @@ CoresColumn.propTypes = {
   systemId: PropTypes.string.isRequired,
 };
 
-export default CoresColumn;
+export default React.memo(CoresColumn);

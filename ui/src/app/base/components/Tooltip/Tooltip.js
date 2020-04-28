@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React, { useRef } from "react";
+import React, { useMemo, useRef } from "react";
 import usePortal from "react-useportal";
 
 const getPositionStyle = (position, el) => {
@@ -49,7 +49,9 @@ const getPositionStyle = (position, el) => {
 const Tooltip = ({ children, message, position = "top-left" }) => {
   const el = useRef(null);
   const { openPortal, closePortal, isOpen, Portal } = usePortal();
-  const positionStyle = getPositionStyle(position, el);
+  const positionStyle = useMemo(() => getPositionStyle(position, el), [
+    position,
+  ]);
 
   return (
     <>
@@ -94,4 +96,4 @@ Tooltip.propTypes = {
   ]),
 };
 
-export default Tooltip;
+export default React.memo(Tooltip);

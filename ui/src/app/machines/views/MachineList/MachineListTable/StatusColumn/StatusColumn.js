@@ -168,4 +168,4 @@ StatusColumn.propTypes = {
   systemId: PropTypes.string.isRequired,
 };
 
-export default StatusColumn;
+export default React.memo(StatusColumn);

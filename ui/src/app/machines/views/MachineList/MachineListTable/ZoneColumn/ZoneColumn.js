@@ -24,6 +24,8 @@ const getSpaces = (machine) => {
   return <span data-test="spaces">{machine.spaces[0]}</span>;
 };
 
+const test = () => {};
+
 const ZoneColumn = ({ onToggleMenu, systemId }) => {
   const dispatch = useDispatch();
   const [updating, setUpdating] = useState(null);
@@ -37,10 +39,7 @@ const ZoneColumn = ({ onToggleMenu, systemId }) => {
     if (zoneLinks.length !== 0) {
       zoneLinks = zoneLinks.map((zone) => ({
         children: zone.name,
-        onClick: () => {
-          dispatch(machineActions.setZone(systemId, zone.id));
-          setUpdating(zone.id);
-        },
+        onClick: test,
       }));
     } else {
       zoneLinks = [{ children: "No other zones available", disabled: true }];
@@ -59,23 +58,11 @@ const ZoneColumn = ({ onToggleMenu, systemId }) => {
 
   return (
     <DoubleRow
-      menuLinks={zoneLinks}
+      menuLinks={null}
       menuTitle="Change AZ:"
       onToggleMenu={onToggleMenu}
-      primary={
-        <span data-test="zone">
-          {updating !== null ? (
-            <Spinner className="u-no-margin u-no-padding--left" inline />
-          ) : null}
-          <a
-            className="p-link--soft"
-            href={generateLegacyURL(`/zone/${machine.zone.id}`)}
-          >
-            {machine.zone.name}
-          </a>
-        </span>
-      }
-      secondary={getSpaces(machine)}
+      primary={null}
+      secondary={null}
     />
   );
 };
@@ -85,4 +72,4 @@ ZoneColumn.propTypes = {
   systemId: PropTypes.string.isRequired,
 };
 
-export default ZoneColumn;
+export default React.memo(ZoneColumn);

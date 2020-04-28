@@ -9,7 +9,7 @@ import {
 import PropTypes from "prop-types";
 import { useDispatch, useSelector } from "react-redux";
 import classNames from "classnames";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import pluralize from "pluralize";
 
 import {
@@ -412,6 +412,7 @@ const MachineListTable = ({
   hiddenGroups,
   setHiddenGroups,
 }) => {
+  console.log("MachineListTable render");
   const dispatch = useDispatch();
   const selectedMachines = useSelector(machineSelectors.selected);
   const selectedIDs = useSelector(machineSelectors.selectedIDs);
@@ -448,59 +449,68 @@ const MachineListTable = ({
   }, [dispatch]);
 
   // Update sort parameters depending on whether the same sort key was clicked.
-  const updateSort = (newSortKey) => {
-    const { key, direction } = currentSort;
+  const updateSort = useCallback(
+    (newSortKey) => {
+      const { key, direction } = currentSort;
 
-    if (newSortKey === key) {
-      if (direction === "ascending") {
-        setCurrentSort({ key: "", direction: "none" });
+      if (newSortKey === key) {
+        if (direction === "ascending") {
+          setCurrentSort({ key: "", direction: "none" });
+        } else {
+          setCurrentSort({ key, direction: "ascending" });
+        }
       } else {
-        setCurrentSort({ key, direction: "ascending" });
+        setCurrentSort({ key: newSortKey, direction: "descending" });
       }
-    } else {
-      setCurrentSort({ key: newSortKey, direction: "descending" });
-    }
-  };
+    },
+    [currentSort]
+  );
 
-  const handleMachineCheckbox = (machine) => {
-    let newSelectedMachines;
-    if (selectedMachines.includes(machine)) {
-      newSelectedMachines = selectedMachines.filter((m) => m !== machine);
-    } else {
-      newSelectedMachines = [...selectedMachines, machine];
-    }
-    dispatch(machineActions.setSelected(newSelectedMachines));
-  };
+  const handleMachineCheckbox = useCallback(
+    (machine) => {
+      let newSelectedMachines;
+      if (selectedMachines.includes(machine)) {
+        newSelectedMachines = selectedMachines.filter((m) => m !== machine);
+      } else {
+        newSelectedMachines = [...selectedMachines, machine];
+      }
+      dispatch(machineActions.setSelected(newSelectedMachines));
+    },
+    [dispatch, selectedMachines]
+  );
 
-  const handleGroupCheckbox = (group) => {
-    let newSelectedMachines;
-    if (checkboxChecked(group.machines, selectedMachines)) {
-      // Unselect all machines in the group if all selected
-      newSelectedMachines = group.machines.reduce(
-        (acc, machine) => {
-          if (acc.includes(machine)) {
-            return acc.filter((m) => m !== machine);
-          }
-          return acc;
-        },
-        [...selectedMachines]
-      );
-    } else {
-      // Select all machines if at least one not selected
-      newSelectedMachines = group.machines.reduce(
-        (acc, machine) => {
-          if (!acc.includes(machine)) {
-            return [...acc, machine];
-          }
-          return acc;
-        },
-        [...selectedMachines]
-      );
-    }
-    dispatch(machineActions.setSelected(newSelectedMachines));
-  };
+  const handleGroupCheckbox = useCallback(
+    (group) => {
+      let newSelectedMachines;
+      if (checkboxChecked(group.machines, selectedMachines)) {
+        // Unselect all machines in the group if all selected
+        newSelectedMachines = group.machines.reduce(
+          (acc, machine) => {
+            if (acc.includes(machine)) {
+              return acc.filter((m) => m !== machine);
+            }
+            return acc;
+          },
+          [...selectedMachines]
+        );
+      } else {
+        // Select all machines if at least one not selected
+        newSelectedMachines = group.machines.reduce(
+          (acc, machine) => {
+            if (!acc.includes(machine)) {
+              return [...acc, machine];
+            }
+            return acc;
+          },
+          [...selectedMachines]
+        );
+      }
+      dispatch(machineActions.setSelected(newSelectedMachines));
+    },
+    [dispatch, selectedMachines]
+  );
 
-  const handleAllCheckbox = () => {
+  const handleAllCheckbox = useCallback(() => {
     let newSelectedMachines;
     if (checkboxChecked(machines, selectedMachines)) {
       newSelectedMachines = [];
@@ -508,15 +518,39 @@ const MachineListTable = ({
       newSelectedMachines = machines;
     }
     dispatch(machineActions.setSelected(newSelectedMachines));
-  };
+  }, [dispatch, machines, selectedMachines]);
 
-  const rowProps = {
+  const tableRows = useMemo(() => {
+    const rowProps = {
+      activeRow,
+      currentSort,
+      handleMachineCheckbox,
+      setActiveRow,
+      showMAC,
+    };
+    return grouping === "none"
+      ? generateRows({ machines, selectedMachines, ...rowProps })
+      : generateGroupRows({
+          groups,
+          handleGroupCheckbox,
+          hiddenGroups,
+          selectedMachines,
+          setHiddenGroups,
+          ...rowProps,
+        });
+  }, [
+    grouping,
     activeRow,
     currentSort,
     handleMachineCheckbox,
-    setActiveRow,
     showMAC,
-  };
+    groups,
+    handleGroupCheckbox,
+    hiddenGroups,
+    machines,
+    selectedMachines,
+    setHiddenGroups,
+  ]);
 
   return (
     <Row>
@@ -715,18 +749,7 @@ const MachineListTable = ({
             },
           ]}
           paginate={200}
-          rows={
-            grouping === "none"
-              ? generateRows({ machines, selectedMachines, ...rowProps })
-              : generateGroupRows({
-                  groups,
-                  handleGroupCheckbox,
-                  hiddenGroups,
-                  selectedMachines,
-                  setHiddenGroups,
-                  ...rowProps,
-                })
-          }
+          rows={tableRows}
         />
         {filter && machines.length === 0 ? (
           <Strip rowClassName="u-align--center">

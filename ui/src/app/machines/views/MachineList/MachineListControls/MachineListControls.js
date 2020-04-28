@@ -92,4 +92,4 @@ MachineListControls.propTypes = {
   setHiddenGroups: PropTypes.func,
 };
 
-export default MachineListControls;
+export default React.memo(MachineListControls);

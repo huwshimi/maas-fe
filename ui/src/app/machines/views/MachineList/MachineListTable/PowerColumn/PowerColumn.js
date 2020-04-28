@@ -124,4 +124,4 @@ PowerColumn.propTypes = {
   systemId: PropTypes.string.isRequired,
 };
 
-export default PowerColumn;
+export default React.memo(PowerColumn);

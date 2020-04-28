@@ -58,4 +58,4 @@ OwnerColumn.propTypes = {
   systemId: PropTypes.string.isRequired,
 };
 
-export default OwnerColumn;
+export default React.memo(OwnerColumn);

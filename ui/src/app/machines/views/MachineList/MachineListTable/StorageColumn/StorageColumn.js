@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-import React from "react";
+import React, { useMemo } from "react";
 import PropTypes from "prop-types";
 
 import { machine as machineSelectors } from "app/base/selectors";
@@ -10,7 +10,9 @@ const StorageColumn = ({ onToggleMenu, systemId }) => {
   const machine = useSelector((state) =>
     machineSelectors.getBySystemId(state, systemId)
   );
-  const formattedStorage = formatBytes(machine.storage, "GB");
+  const formattedStorage = useMemo(() => formatBytes(machine.storage, "GB"), [
+    machine.storage,
+  ]);
 
   return (
     <DoubleRow
@@ -33,4 +35,4 @@ StorageColumn.propTypes = {
   systemId: PropTypes.string.isRequired,
 };
 
-export default StorageColumn;
+export default React.memo(StorageColumn);

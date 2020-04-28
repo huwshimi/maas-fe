@@ -34,4 +34,4 @@ RamColumn.propTypes = {
   systemId: PropTypes.string.isRequired,
 };
 
-export default RamColumn;
+export default React.memo(RamColumn);

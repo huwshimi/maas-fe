@@ -93,4 +93,4 @@ ScriptStatus.propTypes = {
   ]),
 };
 
-export default ScriptStatus;
+export default React.memo(ScriptStatus);

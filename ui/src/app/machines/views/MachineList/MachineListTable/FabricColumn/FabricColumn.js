@@ -51,4 +51,4 @@ FabricColumn.propTypes = {
   systemId: PropTypes.string.isRequired,
 };
 
-export default FabricColumn;
+export default React.memo(FabricColumn);

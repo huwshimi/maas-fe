@@ -75,4 +75,4 @@ PoolColumn.propTypes = {
   systemId: PropTypes.string.isRequired,
 };
 
-export default PoolColumn;
+export default React.memo(PoolColumn);

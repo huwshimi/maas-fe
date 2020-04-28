@@ -34,4 +34,4 @@ TableMenu.propTypes = {
   title: PropTypes.string,
 };
 
-export default TableMenu;
+export default React.memo(TableMenu);

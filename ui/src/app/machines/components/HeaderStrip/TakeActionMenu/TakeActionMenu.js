@@ -93,4 +93,4 @@ TakeActionMenu.propTypes = {
   setSelectedAction: PropTypes.func.isRequired,
 };
 
-export default TakeActionMenu;
+export default React.memo(TakeActionMenu);

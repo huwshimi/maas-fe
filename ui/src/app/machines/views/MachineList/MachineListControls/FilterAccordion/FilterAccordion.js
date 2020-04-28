@@ -96,54 +96,67 @@ const sortByFilterName = (a, b) => {
   return 0;
 };
 
-const FilterAccordion = ({ searchText, setSearchText }) => {
-  const machines = useSelector(machineSelectors.all);
-  const machinesLoaded = useSelector(machineSelectors.loaded);
-  const filterOptions = useMemo(() => getFilters(machines), [machines]);
-  const currentFilters = getCurrentFilters(searchText);
-  const [expandedSection, setExpandedSection] = useState();
-  let sections;
+const Filterlist = ({
+  currentFilters,
+  filterValues,
+  setSearchText,
+  filter,
+}) => (
+  <List
+    className="u-no-margin--bottom"
+    items={Array.from(filterValues)
+      .sort(sortByFilterName)
+      .map(([filterValue, count]) => (
+        <Button
+          appearance="base"
+          className={classNames(
+            "u-align-text--left u-no-margin--bottom filter-accordion__item is-dense",
+            {
+              "is-active": isFilterActive(
+                currentFilters,
+                filter,
+                filterValue,
+                true
+              ),
+            }
+          )}
+          onClick={() => {
+            const newFilters = toggleFilter(
+              currentFilters,
+              filter,
+              filterValue,
+              true
+            );
+            setSearchText(filtersToString(newFilters));
+          }}
+        >
+          {filter === "link_speeds"
+            ? formatSpeedUnits(filterValue)
+            : filterValue}{" "}
+          ({count})
+        </Button>
+      ))}
+  />
+);
+
+const generateSections = (
+  machinesLoaded,
+  filterOptions,
+  currentFilters,
+  setSearchText
+) => {
   if (machinesLoaded) {
-    sections = filterOrder.reduce((options, filter) => {
+    return filterOrder.reduce((options, filter) => {
       const filterValues = filterOptions.get(filter);
       if (filterValues && filterValues.size > 0) {
         options.push({
           title: filterNames.get(filter),
           content: (
-            <List
-              className="u-no-margin--bottom"
-              items={Array.from(filterValues)
-                .sort(sortByFilterName)
-                .map(([filterValue, count]) => (
-                  <Button
-                    appearance="base"
-                    className={classNames(
-                      "u-align-text--left u-no-margin--bottom filter-accordion__item is-dense",
-                      {
-                        "is-active": isFilterActive(
-                          currentFilters,
-                          filter,
-                          filterValue,
-                          true
-                        ),
-                      }
-                    )}
-                    onClick={() => {
-                      const newFilters = toggleFilter(
-                        currentFilters,
-                        filter,
-                        filterValue,
-                        true
-                      );
-                      setSearchText(filtersToString(newFilters));
-                    }}
-                  >
-                    {filter === "link_speeds"
-                      ? formatSpeedUnits(filterValue)
-                      : filterValue}{" "}
-                    ({count})
-                  </Button>
-                ))}
+            <Filterlist
+              currentFilters={currentFilters}
+              filterValues={filterValues}
+              setSearchText={setSearchText}
+              filter={filter}
             />
           ),
           key: filter,
@@ -152,6 +165,24 @@ const FilterAccordion = ({ searchText, setSearchText }) => {
       return options;
     }, []);
   }
+};
+
+const FilterAccordion = ({ searchText, setSearchText }) => {
+  const machines = useSelector(machineSelectors.all);
+  const machinesLoaded = useSelector(machineSelectors.loaded);
+  const filterOptions = useMemo(() => getFilters(machines), [machines]);
+  const currentFilters = getCurrentFilters(searchText);
+  const [expandedSection, setExpandedSection] = useState();
+  let sections = useMemo(
+    () =>
+      generateSections(
+        machinesLoaded,
+        filterOptions,
+        currentFilters,
+        setSearchText
+      ),
+    [machinesLoaded, filterOptions, currentFilters, setSearchText]
+  );
 
   return (
     <ContextualMenu
@@ -183,4 +214,4 @@ FilterAccordion.propTypes = {
   setSearchText: PropTypes.func.isRequired,
 };
 
-export default FilterAccordion;
+export default React.memo(FilterAccordion);

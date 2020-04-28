@@ -34,4 +34,4 @@ DisksColumn.propTypes = {
   systemId: PropTypes.string.isRequired,
 };
 
-export default DisksColumn;
+export default React.memo(DisksColumn);

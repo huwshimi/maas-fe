@@ -1,6 +1,6 @@
 import { Input } from "@canonical/react-components";
 import { useSelector } from "react-redux";
-import React from "react";
+import React, { useMemo } from "react";
 import PropTypes from "prop-types";
 
 import { machine as machineSelectors } from "app/base/selectors";
@@ -94,10 +94,17 @@ const NameColumn = ({
     machineSelectors.getBySystemId(state, systemId)
   );
   const machineURL = `${process.env.REACT_APP_ANGULAR_BASENAME}/${machine.link_type}/${machine.system_id}`;
-  const primaryRow = showMAC
-    ? generateMAC(machine, machineURL)
-    : generateFQDN(machine, machineURL);
-  const secondaryRow = !showMAC && generateIPAddresses(machine);
+  const primaryRow = useMemo(
+    () =>
+      showMAC
+        ? generateMAC(machine, machineURL)
+        : generateFQDN(machine, machineURL),
+    [showMAC, machine, machineURL]
+  );
+  const secondaryRow = useMemo(() => !showMAC && generateIPAddresses(machine), [
+    showMAC,
+    machine,
+  ]);
 
   return (
     <DoubleRow
@@ -129,4 +136,4 @@ NameColumn.propTypes = {
   systemId: PropTypes.string.isRequired,
 };
 
-export default NameColumn;
+export default React.memo(NameColumn);
