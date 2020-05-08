@@ -186,7 +186,7 @@ const configureRoutes = ($routeProvider) => {
 
   routes.otherwise({
     redirectTo: () => {
-      window.location.replace(`${process.env.BASENAME}/r/machines`);
+      // window.location.replace(`${process.env.BASENAME}/r/machines`);
     },
   });
 };

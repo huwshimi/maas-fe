@@ -1,7 +1,8 @@
 import * as angular from "angular";
 import Cookies from "js-cookie";
 
-const bootstrapApp = config => {
+const bootstrapApp = (config) => {
+  console.log("bootstrap");
   // set global config, and bootstrap angular app
   window.CONFIG = config;
   angular.element(document).ready(() => {
@@ -48,14 +49,14 @@ const bootstrapOverWebsocket = () => {
     var msg = {
       request_id: id,
       type: 0,
-      method
+      method,
     };
 
     webSocket.send(JSON.stringify(msg));
   };
 
   const messagesReceived = [];
-  webSocket.onmessage = event => {
+  webSocket.onmessage = (event) => {
     const msg = JSON.parse(event.data);
 
     switch (msg.request_id) {
@@ -74,11 +75,11 @@ const bootstrapOverWebsocket = () => {
           "maas_url",
           "rpc_shared_secret",
           "uuid",
-          "enable_analytics"
+          "enable_analytics",
         ];
 
-        requiredConfigKeys.forEach(key => {
-          let result = msg.result.filter(item => item.name === key);
+        requiredConfigKeys.forEach((key) => {
+          let result = msg.result.filter((item) => item.name === key);
           if (result.length > 0) {
             config[key] = result[0].value;
           }

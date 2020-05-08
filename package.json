@@ -13,6 +13,7 @@
     "cypress-run": "cd proxy && yarn cypress-run",
     "copy-build": "mkdir -p build/legacy build/ui && cp -R legacy/build/* build/legacy/ && cp -R ui/build/* build/ui/",
     "release": "cd ui && yarn run release",
+    "start-single-spa": "cd root && yarn start",
     "serve": "cd proxy && yarn start",
     "start": "yarn serve",
     "clean": "yarn clean-all",
@@ -38,6 +39,7 @@
     "packages": [
       "legacy",
       "proxy",
+      "root",
       "shared",
       "ui"
     ],

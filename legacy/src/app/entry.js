@@ -19,12 +19,13 @@ import React from "react";
 import ReactDOM from "react-dom";
 require("ng-tags-input");
 require("angular-vs-repeat");
+import singleSpaAngularJS from "single-spa-angularjs";
 import * as Sentry from "@sentry/browser";
 import * as Integrations from "@sentry/integrations";
 
 import configureRoutes from "./routes";
-import bootstrap from "./bootstrap";
-import { Footer, Header } from "@canonical/maas-ui-shared";
+import bootstrapOverWebsocket from "./bootstrap";
+import { Footer, Header } from "@maas-ui/maas-ui-shared";
 
 // filters
 import {
@@ -237,9 +238,23 @@ const LOGOUT_API = `${process.env.BASENAME}/accounts/logout/`;
 const checkAuthenticated = () => {
   // Check that the user is authenticated, otherwise redirect to the React
   // login form.
-  fetch(LOGIN_CANARY_API).then(response => {
+  fetch(LOGIN_CANARY_API).then((response) => {
     if (!response.ok) {
-      window.location = `${process.env.BASENAME}${process.env.REACT_BASENAME}`;
+      // window.location = `${process.env.BASENAME}${process.env.REACT_BASENAME}`;
+      console.log(
+        "You're not logged in, find this log and fill in your details here"
+      );
+      fetch("/MAAS/accounts/login/", {
+        method: "POST",
+        mode: "no-cors",
+        credentials: "include",
+        headers: new Headers({
+          Accept: "application/json",
+          "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+          "X-Requested-With": "XMLHttpRequest",
+        }),
+        body: "username=admin&password=test",
+      });
     }
   });
 };
@@ -293,11 +308,11 @@ function introRedirect($rootScope, $location, $window) {
   $rootScope.$on("$routeChangeStart", function (event, next, current) {
     if ($window.CONFIG && !$window.CONFIG.completed_intro) {
       if (next.controller !== "IntroController") {
-        $location.path("/intro");
+        // $location.path("/intro");
       }
     } else if ($window.CONFIG && !$window.CONFIG.current_user.completed_intro) {
       if (next.controller !== "IntroUserController") {
-        $location.path("/intro/user");
+        // $location.path("/intro/user");
       }
     }
   });
@@ -309,7 +324,7 @@ function dashboardRedirect($rootScope, $location, $window) {
     // Only superusers currently have access to the dashboard
     if ($window.CONFIG && !$window.CONFIG.current_user.is_superuser) {
       if (next.controller == "DashboardController") {
-        $location.path("/machines");
+        // $location.path("/machines");
       }
     }
   });
@@ -320,7 +335,7 @@ function dashboardRedirect($rootScope, $location, $window) {
 // so it doesn't flash up in the nav before angular is ready
 function unhideRSDLinks() {
   let rsdLinks = document.querySelectorAll(".js-rsd-link");
-  rsdLinks.forEach(link => link.classList.remove("u-hide"));
+  rsdLinks.forEach((link) => link.classList.remove("u-hide"));
 }
 
 const renderHeader = ($rootScope, $window, $http) => {
@@ -367,7 +382,7 @@ const renderHeader = ($rootScope, $window, $http) => {
   );
 };
 
-const renderFooter = $window => {
+const renderFooter = ($window) => {
   const footerNode = document.querySelector("#footer");
   if (!footerNode) {
     return;
@@ -387,6 +402,15 @@ const displayTemplate = ($rootScope, $window, $http) => {
   renderHeader($rootScope, $window, $http);
   renderFooter($window);
 
+  console.log("displayTemplate");
+  const node = document.createElement("div");
+  node.appendChild(
+    document.createTextNode(
+      `If you're seeing this then angular has bootstrapped and your maas is called ${window.CONFIG.maas_name}`
+    )
+  );
+  document.body.appendChild(node);
+
   $rootScope.$on("$routeChangeSuccess", function (event, next, current) {
     // Update the header when the route changes.
     renderHeader($rootScope, $window, $http);
@@ -405,12 +429,13 @@ Sentry.init({
 });
 
 /* @ngInject */
-const configureSentry = $window => {
+const configureSentry = ($window) => {
   Sentry.setExtra("maasVersion", $window.CONFIG.version);
 };
 
+const moduleName = "MAAS";
 angular
-  .module("MAAS", [
+  .module(moduleName, [
     ngRoute,
     ngCookies,
     ngSanitize,
@@ -600,4 +625,27 @@ angular
   .directive("maasVersionReloader", maasVersionReloader)
   .directive("windowWidth", windowWidth);
 
-bootstrap();
+// bootstrapOverWebsocket();
+
+angular
+  .module("bootstrap", [
+    ngRoute,
+    ngCookies,
+    ngSanitize,
+    "ngTagsInput",
+    "vs-repeat",
+    "ngSentry",
+  ])
+  .run(bootstrapOverWebsocket);
+
+// export lifecycle events for singlespa
+const ngLifecycles = singleSpaAngularJS({
+  angular,
+  mainAngularModule: "bootstrap",
+  uiRouter: false,
+  preserveGlobal: false,
+});
+
+export const bootstrap = ngLifecycles.bootstrap;
+export const mount = ngLifecycles.mount;
+export const unmount = ngLifecycles.unmount;
