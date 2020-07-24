@@ -2,7 +2,7 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router";
 
-import { pod as podActions } from "app/base/actions";
+import { actions as podActions } from "app/store/pod";
 import podSelectors from "app/store/pod/selectors";
 import ActionForm from "app/base/components/ActionForm";
 
@@ -22,7 +22,7 @@ const RefreshForm = ({ setSelectedAction }: Props): JSX.Element | null => {
   return (
     <ActionForm
       actionName="refresh"
-      cleanup={podActions.cleanup}
+      cleanup={() => podActions.cleanup({})} // TODO: This shouldn't require a param.
       clearSelectedAction={() => setSelectedAction(null)}
       errors={errors}
       modelName="KVM"

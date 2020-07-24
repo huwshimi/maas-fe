@@ -1,9 +1,9 @@
-import pod from "./pod";
+import { actions } from "./slice";
 
 describe("pod actions", () => {
   it("should handle fetching pods", () => {
-    expect(pod.fetch()).toEqual({
-      type: "FETCH_POD",
+    expect(actions.fetch()).toEqual({
+      type: "pod/fetch",
       meta: {
         model: "pod",
         method: "list",
@@ -12,8 +12,8 @@ describe("pod actions", () => {
   });
 
   it("can handle creating pods", () => {
-    expect(pod.create({ name: "pod1", description: "a pod" })).toEqual({
-      type: "CREATE_POD",
+    expect(actions.create({ name: "pod1", description: "a pod" })).toEqual({
+      type: "pod/create",
       meta: {
         model: "pod",
         method: "create",
@@ -28,8 +28,8 @@ describe("pod actions", () => {
   });
 
   it("can handle updating pods", () => {
-    expect(pod.update({ name: "pod1", description: "a pod" })).toEqual({
-      type: "UPDATE_POD",
+    expect(actions.update({ name: "pod1", description: "a pod" })).toEqual({
+      type: "pod/update",
       meta: {
         model: "pod",
         method: "update",
@@ -44,8 +44,8 @@ describe("pod actions", () => {
   });
 
   it("can handle deleting pods", () => {
-    expect(pod.delete(1)).toEqual({
-      type: "DELETE_POD",
+    expect(actions.delete(1)).toEqual({
+      type: "pod/delete",
       meta: {
         model: "pod",
         method: "delete",
@@ -59,8 +59,8 @@ describe("pod actions", () => {
   });
 
   it("can handle refreshing pods", () => {
-    expect(pod.refresh(1)).toEqual({
-      type: "REFRESH_POD",
+    expect(actions.refresh(1)).toEqual({
+      type: "pod/refresh",
       meta: {
         model: "pod",
         method: "refresh",
@@ -75,8 +75,8 @@ describe("pod actions", () => {
 
   it("can handle composing pods", () => {
     const params = { id: 1 };
-    expect(pod.compose(params)).toEqual({
-      type: "COMPOSE_POD",
+    expect(actions.compose(params)).toEqual({
+      type: "pod/compose",
       meta: {
         model: "pod",
         method: "compose",
@@ -88,15 +88,15 @@ describe("pod actions", () => {
   });
 
   it("can handle selecting pods", () => {
-    expect(pod.setSelected([1, 2, 4])).toEqual({
-      type: "SET_SELECTED_PODS",
+    expect(actions.setSelected([1, 2, 4])).toEqual({
+      type: "pod/setSelected",
       payload: [1, 2, 4],
     });
   });
 
   it("can handle cleaning pods", () => {
-    expect(pod.cleanup()).toEqual({
-      type: "CLEANUP_POD",
+    expect(actions.cleanup()).toEqual({
+      type: "pod/cleanup",
     });
   });
 });

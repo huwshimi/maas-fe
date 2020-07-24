@@ -6,8 +6,8 @@ import * as Yup from "yup";
 
 import type { RootState } from "app/store/root/types";
 import type { Pod } from "app/store/pod/types";
+import { actions as podActions } from "app/store/pod";
 import {
-  pod as podActions,
   resourcepool as resourcePoolActions,
   tag as tagActions,
   zone as zoneActions,
@@ -65,7 +65,7 @@ const KVMConfiguration = (): JSX.Element => {
   useWindowTitle(`KVM ${`${pod?.name} ` || ""} configuration`);
 
   useEffect(() => {
-    dispatch(podActions.fetch());
+    dispatch(podActions.fetch({})); // TODO: This shouldn't require a param.
     dispatch(resourcePoolActions.fetch());
     dispatch(tagActions.fetch());
     dispatch(zoneActions.fetch());
@@ -80,7 +80,7 @@ const KVMConfiguration = (): JSX.Element => {
       <FormCard sidebar={false} title="KVM configuration">
         <FormikForm
           buttons={FormCardButtons}
-          cleanup={podActions.cleanup}
+          cleanup={() => podActions.cleanup({})} // TODO: This shouldn't require a param.
           errors={errors}
           initialValues={{
             cpu_over_commit_ratio: pod.cpu_over_commit_ratio,

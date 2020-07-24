@@ -5,7 +5,7 @@ import { useParams } from "react-router";
 import { useLocation } from "react-router-dom";
 
 import type { RootState } from "app/store/root/types";
-import { pod as podActions } from "app/base/actions";
+import { actions as podActions } from "app/store/pod";
 import podSelectors from "app/store/pod/selectors";
 import KVMActionFormWrapper from "app/kvm/components/KVMActionFormWrapper";
 import KVMDetailsActionMenu from "./KVMDetailsActionMenu";
@@ -21,7 +21,7 @@ const KVMDetailsHeader = (): JSX.Element => {
   const [selectedAction, setSelectedAction] = useState<string | null>(null);
 
   useEffect(() => {
-    dispatch(podActions.fetch());
+    dispatch(podActions.fetch({})); // TODO: This shouldn't require a param.
   }, [dispatch]);
 
   // If path is not exactly "/kvm/<pod.id>" close the form.

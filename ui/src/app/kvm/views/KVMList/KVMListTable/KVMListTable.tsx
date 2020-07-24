@@ -3,12 +3,12 @@ import classNames from "classnames";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
+import { actions as podActions } from "app/store/pod";
 import { getStatusText } from "app/utils";
 import {
   controller as controllerActions,
   general as generalActions,
   machine as machineActions,
-  pod as podActions,
   resourcepool as poolActions,
   zone as zoneActions,
 } from "app/base/actions";
@@ -119,7 +119,7 @@ const KVMListTable = (): JSX.Element => {
     dispatch(controllerActions.fetch());
     dispatch(generalActions.fetchOsInfo());
     dispatch(machineActions.fetch());
-    dispatch(podActions.fetch());
+    dispatch(podActions.fetch({})); // TODO: This shouldn't require a param.
     dispatch(poolActions.fetch());
     dispatch(zoneActions.fetch());
   }, [dispatch]);

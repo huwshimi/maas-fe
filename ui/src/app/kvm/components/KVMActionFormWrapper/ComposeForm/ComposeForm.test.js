@@ -76,7 +76,7 @@ describe("ComposeForm", () => {
       "FETCH_DOMAIN",
       "FETCH_FABRIC",
       "FETCH_GENERAL_POWER_TYPES",
-      "FETCH_POD",
+      "pod/fetch",
       "FETCH_RESOURCEPOOL",
       "FETCH_SPACE",
       "FETCH_SUBNET",
@@ -127,9 +127,9 @@ describe("ComposeForm", () => {
       })
     );
     expect(
-      store.getActions().find((action) => action.type === "COMPOSE_POD")
+      store.getActions().find((action) => action.type === "pod/compose")
     ).toStrictEqual({
-      type: "COMPOSE_POD",
+      type: "pod/compose",
       meta: {
         method: "compose",
         model: "pod",

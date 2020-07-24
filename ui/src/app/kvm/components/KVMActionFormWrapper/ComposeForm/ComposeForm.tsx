@@ -5,12 +5,12 @@ import { useParams } from "react-router";
 import * as Yup from "yup";
 
 import type { RootState } from "app/store/root/types";
+import { actions as podActions } from "app/store/pod";
 import {
   domain as domainActions,
   fabric as fabricActions,
   general as generalActions,
   messages as messagesActions,
-  pod as podActions,
   resourcepool as resourcePoolActions,
   space as spaceActions,
   subnet as subnetActions,
@@ -71,7 +71,7 @@ const ComposeForm = ({ setSelectedAction }: Props): JSX.Element | null => {
     dispatch(domainActions.fetch());
     dispatch(fabricActions.fetch());
     dispatch(generalActions.fetchPowerTypes());
-    dispatch(podActions.fetch());
+    dispatch(podActions.fetch({})); // TODO: This shouldn't require a param.
     dispatch(resourcePoolActions.fetch());
     dispatch(spaceActions.fetch());
     dispatch(subnetActions.fetch());
@@ -120,7 +120,7 @@ const ComposeForm = ({ setSelectedAction }: Props): JSX.Element | null => {
       <ActionForm
         actionName="compose"
         allowUnchanged
-        cleanup={podActions.cleanup}
+        cleanup={() => podActions.cleanup({})} // TODO: This shouldn't require a param.
         clearSelectedAction={() => setSelectedAction(null)}
         errors={errors}
         initialValues={{
