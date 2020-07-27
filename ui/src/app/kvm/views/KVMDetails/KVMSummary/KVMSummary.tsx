@@ -20,7 +20,7 @@ const KVMSummary = (): JSX.Element => {
   useWindowTitle(`KVM ${`${pod?.name} ` || ""} details`);
 
   useEffect(() => {
-    dispatch(podActions.fetch({})); // TODO: This shouldn't require a param.
+    dispatch(podActions.fetch());
   }, [dispatch]);
 
   if (!!pod) {

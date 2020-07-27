@@ -1,5 +1,12 @@
-import { generateSlice, generateStatusHandlers } from "app/store/utils";
+import { PayloadAction, SliceCaseReducers } from "@reduxjs/toolkit";
+
+import {
+  generateBaseHandlers,
+  generateSlice,
+  generateStatusHandlers,
+} from "app/store/utils";
 import { Pod, PodState } from "./types";
+import type { GenericState } from "app/store/types/state";
 
 export const DEFAULT_STATUSES = {
   composing: false,
@@ -7,27 +14,28 @@ export const DEFAULT_STATUSES = {
   refreshing: false,
 };
 
-const podSlice = generateSlice<PodState>({
+const podSlice = generateSlice({
   initialState: {
     selected: [],
     statuses: {},
-  },
+  } as PodState,
   name: "pod",
   reducers: {
+    ...generateBaseHandlers<PodState, Pod>("pod"),
     // Replace the default handler with this one that also updates the
     // selected state.
-    deleteNotify: (state, action) => {
+    deleteNotify: (state: PodState, action) => {
       const index = state.items.findIndex(
         (item: Pod) => item.id === action.payload
       );
       state.items.splice(index, 1);
       state.selected = state.selected.filter(
-        (podId) => podId !== action.payload
+        (podId: Pod["id"]) => podId !== action.payload
       );
       // Clean up the statuses for model.
       delete state.statuses[action.payload];
     },
-    fetchSuccess: (state, action) => {
+    fetchSuccess: (state: PodState, action) => {
       state.loading = false;
       state.loaded = true;
       action.payload.forEach((newItem: Pod) => {
@@ -49,11 +57,11 @@ const podSlice = generateSlice<PodState>({
       prepare: (podIDs: Pod["id"][]) => ({
         payload: podIDs,
       }),
-      reducer: (state, action) => {
+      reducer: (state: PodState, action: PayloadAction<Pod["id"][]>) => {
         state.selected = action.payload;
       },
     },
-    createNotify: (state, action) => {
+    createNotify: (state: PodState, action) => {
       // In the event that the server erroneously attempts to create an existing machine,
       // due to a race condition etc., ensure we update instead of creating duplicates.
       const existingIdx = state.items.findIndex(
@@ -66,7 +74,7 @@ const podSlice = generateSlice<PodState>({
         state.statuses[action.payload.id] = DEFAULT_STATUSES;
       }
     },
-    ...generateStatusHandlers<PodState, Pod, "id">("id", [
+    ...generateStatusHandlers<PodState, Pod, "id">("pod", "id", [
       {
         status: "compose",
         statusKey: "composing",
@@ -92,6 +100,7 @@ const podSlice = generateSlice<PodState>({
       },
     ]),
   },
+  // } as SliceCaseReducers<PodState>,
 });
 
 export const { actions } = podSlice;

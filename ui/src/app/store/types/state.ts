@@ -1,5 +1,7 @@
-export type GenericState<I, E> = {
-  errors: E;
+import type { TSFixMe } from "app/base/types";
+
+export type GenericState<I> = {
+  errors: TSFixMe;
   items: I[];
   loaded: boolean;
   loading: boolean;

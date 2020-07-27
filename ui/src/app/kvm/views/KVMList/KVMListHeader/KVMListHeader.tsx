@@ -31,7 +31,7 @@ const KVMListHeader = (): JSX.Element => {
   const [selectedAction, setSelectedAction] = useState<string | null>(null);
 
   useEffect(() => {
-    dispatch(podActions.fetch({})); // TODO: This shouldn't require a param.
+    dispatch(podActions.fetch());
   }, [dispatch]);
 
   // If path is not exactly "/kvm" or no KVMs are selected, close the form.

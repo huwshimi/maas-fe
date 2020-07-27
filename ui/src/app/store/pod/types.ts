@@ -69,4 +69,4 @@ export type PodStatuses = {
 export type PodState = {
   selected: Pod["id"][];
   statuses: PodStatuses;
-} & GenericState<Pod, TSFixMe>;
+} & GenericState<Pod>;

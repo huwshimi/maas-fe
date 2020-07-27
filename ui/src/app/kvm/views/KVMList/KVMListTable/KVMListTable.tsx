@@ -119,7 +119,7 @@ const KVMListTable = (): JSX.Element => {
     dispatch(controllerActions.fetch());
     dispatch(generalActions.fetchOsInfo());
     dispatch(machineActions.fetch());
-    dispatch(podActions.fetch({})); // TODO: This shouldn't require a param.
+    dispatch(podActions.fetch());
     dispatch(poolActions.fetch());
     dispatch(zoneActions.fetch());
   }, [dispatch]);

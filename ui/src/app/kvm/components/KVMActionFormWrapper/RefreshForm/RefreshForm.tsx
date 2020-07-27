@@ -22,7 +22,7 @@ const RefreshForm = ({ setSelectedAction }: Props): JSX.Element | null => {
   return (
     <ActionForm
       actionName="refresh"
-      cleanup={() => podActions.cleanup({})} // TODO: This shouldn't require a param.
+      cleanup={() => podActions.cleanup()}
       clearSelectedAction={() => setSelectedAction(null)}
       errors={errors}
       modelName="KVM"

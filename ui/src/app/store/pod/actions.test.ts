@@ -27,7 +27,7 @@ describe("pod actions", () => {
     });
   });
 
-  it("can handle updating pods", () => {
+  it("can andle updating pods", () => {
     expect(actions.update({ name: "pod1", description: "a pod" })).toEqual({
       type: "pod/update",
       meta: {

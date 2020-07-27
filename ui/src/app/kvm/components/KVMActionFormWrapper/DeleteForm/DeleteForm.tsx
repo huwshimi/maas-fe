@@ -21,7 +21,7 @@ const DeleteForm = ({ setSelectedAction }: Props): JSX.Element => {
   return (
     <ActionForm
       actionName="delete"
-      cleanup={() => podActions.cleanup({})} // TODO: This shouldn't require a param.
+      cleanup={() => podActions.cleanup()}
       clearSelectedAction={() => setSelectedAction(null)}
       errors={errors}
       modelName="KVM"

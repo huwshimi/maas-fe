@@ -65,7 +65,7 @@ const KVMConfiguration = (): JSX.Element => {
   useWindowTitle(`KVM ${`${pod?.name} ` || ""} configuration`);
 
   useEffect(() => {
-    dispatch(podActions.fetch({})); // TODO: This shouldn't require a param.
+    dispatch(podActions.fetch());
     dispatch(resourcePoolActions.fetch());
     dispatch(tagActions.fetch());
     dispatch(zoneActions.fetch());
@@ -80,7 +80,7 @@ const KVMConfiguration = (): JSX.Element => {
       <FormCard sidebar={false} title="KVM configuration">
         <FormikForm
           buttons={FormCardButtons}
-          cleanup={() => podActions.cleanup({})} // TODO: This shouldn't require a param.
+          cleanup={() => podActions.cleanup()}
           errors={errors}
           initialValues={{
             cpu_over_commit_ratio: pod.cpu_over_commit_ratio,

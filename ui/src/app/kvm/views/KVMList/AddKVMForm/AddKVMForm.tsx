@@ -59,7 +59,7 @@ export const AddKVMForm = (): JSX.Element => {
   const allLoaded = powerTypesLoaded && resourcePoolsLoaded && zonesLoaded;
   const initialHostType = "virsh";
 
-  const cleanup = useCallback(() => podActions.cleanup({}), []); // TODO: This shouldn't require a param.
+  const cleanup = useCallback(() => podActions.cleanup(), []);
 
   // Fetch all data required for the form.
   useEffect(() => {

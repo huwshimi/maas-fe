@@ -9,6 +9,8 @@ import {
 } from "@reduxjs/toolkit";
 
 import type { RootState } from "app/store/root/types";
+import type { GenericState } from "app/store/types/state";
+import type { TSFixMe } from "app/base/types";
 
 type GenericItemMeta<I> = {
   item: I;
@@ -33,21 +35,16 @@ type StatusStateTypes = StatusStates[keyof StatusStates];
 
 type StatusPrepare = (...args: unknown[]) => unknown;
 
-export const generateSlice = <
-  // Any of the allowed state types.
-  S extends CommonStateTypes
->({
+export const generateSlice = <I, R extends SliceCaseReducers<GenericState<I>>>({
   name = "",
   initialState,
   reducers,
 }: {
   name: string;
-  // Allow any keys for this state that don't exist on all states.
-  initialState: Partial<S>;
-  reducers: ValidateSliceCaseReducers<S, SliceCaseReducers<S>>;
-}): Slice<S, SliceCaseReducers<S>, string> => {
+  initialState: GenericState<I>;
+  reducers: ValidateSliceCaseReducers<GenericState<I>, R>;
+}): Slice<GenericState<I>, R, string> => {
   return createSlice({
-    name,
     initialState: {
       errors: {},
       items: [],
@@ -56,151 +53,158 @@ export const generateSlice = <
       saved: false,
       saving: false,
       ...initialState,
-    } as S,
-    reducers: {
-      fetch: {
-        prepare: (params?) => ({
-          meta: {
-            model: name,
-            method: "list",
-          },
-          payload: params && {
-            params,
-          },
-        }),
-        reducer: () => {
-          // No state changes need to be handled for this action.
-        },
-      },
-      fetchStart: (state, _action: PayloadAction<undefined>) => {
-        state.loading = true;
-      },
-      fetchError: (state, action) => {
-        state.errors = action.payload;
-        state.loading = false;
-      },
-      fetchSuccess: (state, action) => {
-        state.loading = false;
-        state.loaded = true;
-        state.items = action.payload;
-      },
-      create: {
-        prepare: (params) => ({
-          meta: {
-            model: name,
-            method: "create",
-          },
-          payload: {
-            params,
-          },
-        }),
-        reducer: () => {
-          // No state changes need to be handled for this action.
-        },
-      },
-      createStart: (state, _action: PayloadAction<undefined>) => {
-        state.saved = false;
-        state.saving = true;
-      },
-      createError: (state, action) => {
-        state.errors = action.payload;
-        state.saving = false;
-      },
-      createSuccess: (state) => {
-        state.errors = {};
-        state.saved = true;
-        state.saving = false;
-      },
-      createNotify: (state, action) => {
-        // In the event that the server erroneously attempts to create an existing model,
-        // due to a race condition etc., ensure we update instead of creating duplicates.
-        const existingIdx = state.items.findIndex(
-          (draftItem: S["items"][0]) => draftItem.id === action.payload.id
-        );
-        if (existingIdx !== -1) {
-          state.items[existingIdx] = action.payload;
-        } else {
-          state.items.push(action.payload);
-        }
-      },
-      update: {
-        prepare: (params) => ({
-          meta: {
-            model: name,
-            method: "update",
-          },
-          payload: {
-            params,
-          },
-        }),
-        reducer: () => {
-          // No state changes need to be handled for this action.
-        },
-      },
-      updateStart: (state) => {
-        state.saved = false;
-        state.saving = true;
-      },
-      updateError: (state, action) => {
-        state.errors = action.payload;
-        state.saving = false;
-      },
-      updateSuccess: (state) => {
-        state.errors = {};
-        state.saved = true;
-        state.saving = false;
-      },
-      updateNotify: (state, action) => {
-        for (const i in state.items) {
-          if (state.items[i].id === action.payload.id) {
-            state.items[i] = action.payload;
-          }
-        }
-      },
-      delete: {
-        prepare: (id) => ({
-          meta: {
-            model: name,
-            method: "delete",
-          },
-          payload: {
-            params: {
-              id,
-            },
-          },
-        }),
-        reducer: () => {
-          // No state changes need to be handled for this action.
-        },
-      },
-      deleteStart: (state) => {
-        state.saved = false;
-        state.saving = true;
-      },
-      deleteError: (state, action) => {
-        state.errors = action.payload;
-        state.saving = false;
-      },
-      deleteSuccess: (state) => {
-        state.errors = {};
-        state.saved = true;
-        state.saving = false;
-      },
-      deleteNotify: (state, action) => {
-        const index = state.items.findIndex(
-          (item: S["items"][0]) => item.id === action.payload
-        );
-        state.items.splice(index, 1);
-      },
-      cleanup: (state) => {
-        state.errors = {};
-        state.saved = false;
-        state.saving = false;
-      },
-      ...reducers,
     },
+    name,
+    reducers,
   });
 };
+
+export const generateBaseHandlers = <
+  S extends CommonStateTypes,
+  I extends S["items"][0]
+>(
+  name: string
+) => ({
+  fetch: {
+    prepare: (params?: TSFixMe) => ({
+      meta: {
+        model: name,
+        method: "list",
+      },
+      payload: params && {
+        params,
+      },
+    }),
+    reducer: () => {
+      // No state changes need to be handled for this action.
+    },
+  },
+  fetchStart: (state: GenericState<I>) => {
+    state.loading = true;
+  },
+  fetchError: (state: GenericState<I>, action: PayloadAction<I>) => {
+    state.errors = action.payload;
+    state.loading = false;
+  },
+  fetchSuccess: (state: GenericState<I>, action: PayloadAction<I[]>) => {
+    state.loading = false;
+    state.loaded = true;
+    state.items = action.payload;
+  },
+  create: {
+    prepare: (params) => ({
+      meta: {
+        model: name,
+        method: "create",
+      },
+      payload: {
+        params,
+      },
+    }),
+    reducer: () => {
+      // No state changes need to be handled for this action.
+    },
+  },
+  createStart: (state: GenericState<I>, _action: PayloadAction<undefined>) => {
+    state.saved = false;
+    state.saving = true;
+  },
+  createError: (state: GenericState<I>, action: PayloadAction<I>) => {
+    state.errors = action.payload;
+    state.saving = false;
+  },
+  createSuccess: (state: GenericState<I>) => {
+    state.errors = {};
+    state.saved = true;
+    state.saving = false;
+  },
+  createNotify: (state: GenericState<I>, action: PayloadAction<I>) => {
+    // In the event that the server erroneously attempts to create an existing model,
+    // due to a race condition etc., ensure we update instead of creating duplicates.
+    const existingIdx = state.items.findIndex(
+      (draftItem: S["items"][0]) => draftItem.id === action.payload.id
+    );
+    if (existingIdx !== -1) {
+      state.items[existingIdx] = action.payload;
+    } else {
+      state.items.push(action.payload);
+    }
+  },
+  update: {
+    prepare: (params) => ({
+      meta: {
+        model: name,
+        method: "update",
+      },
+      payload: {
+        params,
+      },
+    }),
+    reducer: () => {
+      // No state changes need to be handled for this action.
+    },
+  },
+  updateStart: (state: GenericState<I>) => {
+    state.saved = false;
+    state.saving = true;
+  },
+  updateError: (state: GenericState<I>, action: PayloadAction<I>) => {
+    state.errors = action.payload;
+    state.saving = false;
+  },
+  updateSuccess: (state: GenericState<I>) => {
+    state.errors = {};
+    state.saved = true;
+    state.saving = false;
+  },
+  updateNotify: (state: GenericState<I>, action: PayloadAction<I>) => {
+    for (const i in state.items) {
+      if (state.items[i].id === action.payload.id) {
+        state.items[i] = action.payload;
+      }
+    }
+  },
+  delete: {
+    prepare: (id) => ({
+      meta: {
+        model: name,
+        method: "delete",
+      },
+      payload: {
+        params: {
+          id,
+        },
+      },
+    }),
+    reducer: () => {
+      // No state changes need to be handled for this action.
+    },
+  },
+  deleteStart: (state: GenericState<I>) => {
+    state.saved = false;
+    state.saving = true;
+  },
+  deleteError: (state: GenericState<I>, action: PayloadAction<I>) => {
+    state.errors = action.payload;
+    state.saving = false;
+  },
+  deleteSuccess: (state: GenericState<I>) => {
+    state.errors = {};
+    state.saved = true;
+    state.saving = false;
+  },
+  deleteNotify: (state: GenericState<I>, action: PayloadAction<I["id"]>) => {
+    const index = state.items.findIndex(
+      (item: S["items"][0]) => item.id === action.payload
+    );
+    state.items.splice(index, 1);
+  },
+  cleanup: (state: GenericState<I>) => {
+    state.errors = {};
+    state.saved = false;
+    state.saving = false;
+  },
+});
 
 export const generateStatusHandlers = <
   S extends StatusStateTypes,
@@ -208,6 +212,7 @@ export const generateStatusHandlers = <
   // A model key as a reference to the supplied state item.
   K extends keyof I
 >(
+  modelName: string,
   indexKey: K,
   handlers: {
     status: string;
@@ -223,7 +228,7 @@ export const generateStatusHandlers = <
     collection[status.status] = {
       prepare: (...args: unknown[]) => ({
         meta: {
-          model: "pod",
+          model: modelName,
           method: status.status,
         },
         payload: {

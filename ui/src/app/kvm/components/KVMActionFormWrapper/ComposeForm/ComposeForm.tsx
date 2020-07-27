@@ -71,7 +71,7 @@ const ComposeForm = ({ setSelectedAction }: Props): JSX.Element | null => {
     dispatch(domainActions.fetch());
     dispatch(fabricActions.fetch());
     dispatch(generalActions.fetchPowerTypes());
-    dispatch(podActions.fetch({})); // TODO: This shouldn't require a param.
+    dispatch(podActions.fetch());
     dispatch(resourcePoolActions.fetch());
     dispatch(spaceActions.fetch());
     dispatch(subnetActions.fetch());
@@ -120,7 +120,7 @@ const ComposeForm = ({ setSelectedAction }: Props): JSX.Element | null => {
       <ActionForm
         actionName="compose"
         allowUnchanged
-        cleanup={() => podActions.cleanup({})} // TODO: This shouldn't require a param.
+        cleanup={() => podActions.cleanup()}
         clearSelectedAction={() => setSelectedAction(null)}
         errors={errors}
         initialValues={{
