@@ -22,6 +22,9 @@ import {
   getInterfaceTypeText,
   isBootInterface,
   isInterfaceConnected,
+  isLimitedEditingAllowed,
+  useCanEdit,
+  useIsAllNetworkingDisabled,
 } from "app/store/machine/utils";
 import type { RootState } from "app/store/root/types";
 import { actions as subnetActions } from "app/store/subnet";
@@ -202,6 +205,13 @@ const generateRows = (
               />
             ) : null,
         },
+        {
+          content:
+            !isAllNetworkingDisabled ||
+            isLimitedEditingAllowed(nic, machine, canEdit)
+              ? "V"
+              : null,
+        },
       ],
       key: nic.id,
       sortData: {
@@ -236,6 +246,8 @@ const NetworkTable = ({ systemId }: Props): JSX.Element => {
     key: "name",
     direction: "ascending",
   });
+  const canEdit = useCanEdit(machine);
+  const isAllNetworkingDisabled = useIsAllNetworkingDisabled(machine);
 
   useEffect(() => {
     dispatch(fabricActions.fetch());

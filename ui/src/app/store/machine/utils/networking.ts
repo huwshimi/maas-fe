@@ -149,3 +149,24 @@ const LINK_MODE_DISPLAY = {
  */
 export const getLinkModeDisplay = (mode: NetworkLinkMode): string | null =>
   LINK_MODE_DISPLAY[mode] || mode;
+
+/**
+ * Check if only the name or mac address of an interface can
+ * be edited.
+ * @param nic - A network interface.
+ * @param machine - A machine.
+ * @return Whether limited editing is allowed.
+ */
+export const isLimitedEditingAllowed = function (
+  nic: NetworkInterface,
+  machine: Machine,
+  canEdit: boolean
+) {
+  if (!canEdit) {
+    return false;
+  }
+  return (
+    machine?.status === NodeStatus.DEPLOYED &&
+    nic.type !== NetworkInterfaceTypes.VLAN
+  );
+};
