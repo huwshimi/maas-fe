@@ -4,6 +4,7 @@ import {
   NetworkInterfaceTypes,
   NetworkLinkMode,
 } from "app/store/machine/types";
+import { NodeStatus } from "app/store/types/node";
 
 const INTERFACE_TYPE_DISPLAY = {
   [NetworkInterfaceTypes.PHYSICAL]: "Physical",
@@ -149,3 +150,54 @@ const LINK_MODE_DISPLAY = {
  */
 export const getLinkModeDisplay = (mode: NetworkLinkMode): string | null =>
   LINK_MODE_DISPLAY[mode] || mode;
+
+/**
+ * Check if only the name or mac address of an interface can
+ * be edited.
+ * @param nic - A network interface.
+ * @param machine - A machine.
+ * @return Whether limited editing is allowed.
+ */
+export const isLimitedEditingAllowed = (
+  nic: NetworkInterface | null,
+  machine: Machine | null,
+  canEdit: boolean
+): boolean => {
+  if (!canEdit) {
+    return false;
+  }
+  return (
+    machine?.status === NodeStatus.DEPLOYED &&
+    nic?.type !== NetworkInterfaceTypes.VLAN
+  );
+};
+
+// Check if the alias can be added to interface.
+const canAddAlias = (nic) => {
+  if (!angular.isObject(nic)) {
+    return false;
+  } else if (nic.type === INTERFACE_TYPE.ALIAS) {
+    return false;
+  } else if (
+    nic.links.length === 0 ||
+    nic.links[0].mode === LINK_MODE.LINK_UP
+  ) {
+    return false;
+  } else {
+    return true;
+  }
+};
+
+// Check if the VLAN can be added to interface.
+const canAddVLAN = (nic) => {
+  if (!angular.isObject(nic)) {
+    return false;
+  } else if (
+    nic.type === INTERFACE_TYPE.ALIAS ||
+    nic.type === INTERFACE_TYPE.VLAN
+  ) {
+    return false;
+  }
+  var unusedVLANs = getUnusedVLANs(nic);
+  return unusedVLANs.length > 0;
+};

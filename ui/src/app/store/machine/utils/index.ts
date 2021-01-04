@@ -15,6 +15,7 @@ export {
   getLinkModeDisplay,
   isBootInterface,
   isInterfaceConnected,
+  isLimitedEditingAllowed,
 } from "./networking";
 
 export {
