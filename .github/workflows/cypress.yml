@@ -8,6 +8,15 @@ jobs:
       MAAS_URL: http://localhost:5240
     steps:
       - uses: actions/checkout@main
+      - if: failure()
+        uses: JasonEtco/create-an-issue@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          branch_name: ${GITHUB_REF#refs/heads/}
+          assignees: ${{ payload.sender.login }}
+        with:
+          filename: .github/cypress-failure.md
+          update_existing: true
       - name: Install MAAS
         run: |
           sudo systemctl enable snapd
