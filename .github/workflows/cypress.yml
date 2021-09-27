@@ -13,7 +13,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           branch_name: ${GITHUB_REF#refs/heads/}
-          assignees: ${{ payload.sender.login }}
         with:
           filename: .github/cypress-failure.md
           update_existing: true
