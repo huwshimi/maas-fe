@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 
 import { Col, Row, Spinner, Strip } from "@canonical/react-components";
 import { useDispatch, useSelector } from "react-redux";
-import { Redirect, useLocation } from "react-router";
+import { Navigate, useLocation } from "react-router";
 
 import KVMListHeader from "./KVMListHeader";
 import LxdTable from "./LxdTable";
@@ -46,7 +46,7 @@ const KVMList = (): JSX.Element => {
 
   // Redirect to the appropriate tab when arriving at /kvm.
   if (!showingLXD && !showingVirsh) {
-    return <Redirect to={kvmURLs.lxd.index} />;
+    return <Navigate replace to={kvmURLs.lxd.index} />;
   }
 
   let content: ReactNode = null;

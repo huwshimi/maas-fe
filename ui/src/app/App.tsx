@@ -11,7 +11,7 @@ import {
 } from "@maas-ui/maas-ui-shared";
 import * as Sentry from "@sentry/browser";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useHistory, useLocation } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 
 import Routes from "app/Routes";
 import Login from "app/base/components/Login";
@@ -50,7 +50,7 @@ export type LinkProps = {
 
 export const App = (): JSX.Element => {
   const dispatch = useDispatch();
-  const history = useHistory();
+  const navigate = useNavigate();
   const location = useLocation();
   const analyticsEnabled = useSelector(configSelectors.analyticsEnabled);
   const authenticated = useSelector(status.authenticated);
@@ -101,9 +101,9 @@ export const App = (): JSX.Element => {
   useEffect(() => {
     if (configLoaded) {
       if (!completedIntro) {
-        history.push({ pathname: introURLs.index });
+        navigate({ pathname: introURLs.index });
       } else if (!!authUser && !completedUserIntro) {
-        history.push({ pathname: introURLs.user });
+        navigate({ pathname: introURLs.user });
       }
     }
   }, [
@@ -112,7 +112,7 @@ export const App = (): JSX.Element => {
     completedIntro,
     completedUserIntro,
     configLoaded,
-    history,
+    navigate,
   ]);
 
   let content: ReactNode = null;
@@ -191,7 +191,6 @@ export const App = (): JSX.Element => {
             window.legacyWS.close();
           }
         }}
-        urlChange={history.listen}
         uuid={uuid as string}
         version={version}
       />

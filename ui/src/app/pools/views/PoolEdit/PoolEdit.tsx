@@ -24,7 +24,7 @@ export const PoolEdit = (): JSX.Element => {
     return (
       <ModelNotFound
         id={id}
-        linkURL={poolURLs.pools}
+        linkURL={poolURLs.index}
         modelName="resource pool"
       />
     );

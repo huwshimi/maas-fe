@@ -150,12 +150,12 @@ const generateRows = (
                 <Link
                   className="p-button--neutral no-background has-icon u-no-margin"
                   data-testid="vm-host-settings"
+                  state={{ from: location.pathname }}
                   to={{
                     pathname: kvmURLs.lxd.cluster.host.edit({
                       clusterId,
                       hostId: host.id,
                     }),
-                    state: { from: location.pathname },
                   }}
                 >
                   <Icon name="settings" />
@@ -176,7 +176,7 @@ const LXDClusterHostsTable = ({
   setHeaderContent,
 }: Props): JSX.Element => {
   const dispatch = useDispatch();
-  const location = useLocation<Location>();
+  const location = useLocation();
   const pools = useSelector(poolSelectors.all);
   const podsLoaded = useSelector(podSelectors.loaded);
   const poolsLoaded = useSelector(poolSelectors.loaded);

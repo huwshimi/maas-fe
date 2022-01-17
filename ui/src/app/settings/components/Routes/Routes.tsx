@@ -1,4 +1,4 @@
-import { Route, Redirect, Switch } from "react-router-dom";
+import { Route, Navigate, Routes } from "react-router-dom";
 
 import NotFound from "app/base/views/NotFound";
 import settingsURLs from "app/settings/urls";
@@ -30,127 +30,80 @@ import UserAdd from "app/settings/views/Users/UserAdd";
 import UserEdit from "app/settings/views/Users/UserEdit";
 import UsersList from "app/settings/views/Users/UsersList";
 
-const Routes = (): JSX.Element => {
+const SettingsRoutes = (): JSX.Element => {
   return (
-    <Switch>
+    <Routes>
+      <Route path={settingsURLs.configuration.general} children={General} />
       <Route
-        exact
-        path={settingsURLs.configuration.general}
-        component={General}
-      />
-      <Route
-        exact
         path={settingsURLs.configuration.commissioning}
-        component={Commissioning}
+        children={Commissioning}
       />
       <Route
-        exact
         path={settingsURLs.configuration.kernelParameters}
-        component={KernelParameters}
+        children={KernelParameters}
       />
+      <Route path={settingsURLs.configuration.deploy} children={Deploy} />
+      <Route path={settingsURLs.index}>
+        <Navigate replace to={settingsURLs.configuration.index} />
+      </Route>
+      <Route path={settingsURLs.configuration.index}>
+        <Navigate replace to={settingsURLs.configuration.general} />
+      </Route>
+      <Route path={settingsURLs.users.index} children={UsersList} />
+      <Route path={settingsURLs.users.add} children={UserAdd} />
+      <Route path={settingsURLs.users.edit(null, true)} children={UserEdit} />
+      <Route path={settingsURLs.licenseKeys.index} children={LicenseKeyList} />
+      <Route path={settingsURLs.licenseKeys.add} children={LicenseKeyAdd} />
       <Route
-        exact
-        path={settingsURLs.configuration.deploy}
-        component={Deploy}
-      />
-      <Redirect
-        exact
-        from={settingsURLs.index}
-        to={settingsURLs.configuration.index}
-      />
-      <Redirect
-        from={settingsURLs.configuration.index}
-        to={settingsURLs.configuration.general}
-      />
-      <Route exact path={settingsURLs.users.index} component={UsersList} />
-      <Route exact path={settingsURLs.users.add} component={UserAdd} />
-      <Route
-        exact
-        path={settingsURLs.users.edit(null, true)}
-        component={UserEdit}
-      />
-      <Route
-        exact
-        path={settingsURLs.licenseKeys.index}
-        component={LicenseKeyList}
-      />
-      <Route
-        exact
-        path={settingsURLs.licenseKeys.add}
-        component={LicenseKeyAdd}
-      />
-      <Route
-        exact
         path={settingsURLs.licenseKeys.edit(null, true)}
-        component={LicenseKeyEdit}
+        children={LicenseKeyEdit}
       />
-      <Route exact path={settingsURLs.storage} component={StorageForm} />
-      <Route exact path={settingsURLs.network.proxy} component={ProxyForm} />
-      <Route exact path={settingsURLs.network.dns} component={DnsForm} />
-      <Route exact path={settingsURLs.network.ntp} component={NtpForm} />
-      <Route exact path={settingsURLs.network.syslog} component={SyslogForm} />
+      <Route path={settingsURLs.storage} children={StorageForm} />
+      <Route path={settingsURLs.network.proxy} children={ProxyForm} />
+      <Route path={settingsURLs.network.dns} children={DnsForm} />
+      <Route path={settingsURLs.network.ntp} children={NtpForm} />
+      <Route path={settingsURLs.network.syslog} children={SyslogForm} />
       <Route
-        exact
         path={settingsURLs.network.networkDiscovery}
-        component={NetworkDiscoveryForm}
-      />
-      <Redirect
-        exact
-        from={settingsURLs.network.index}
-        to={settingsURLs.network.proxy}
+        children={NetworkDiscoveryForm}
       />
       <Route
-        exact
         path={settingsURLs.scripts.commissioning.index}
-        component={() => <ScriptsList type="commissioning" />}
+        element={<ScriptsList type="commissioning" />}
       />
       <Route
-        exact
         path={settingsURLs.scripts.commissioning.upload}
-        component={() => <ScriptsUpload type="commissioning" />}
+        element={<ScriptsUpload type="commissioning" />}
       />
       <Route
-        exact
         path={settingsURLs.scripts.testing.index}
-        component={() => <ScriptsList type="testing" />}
+        element={<ScriptsList type="testing" />}
       />
       <Route
-        exact
         path={settingsURLs.scripts.testing.upload}
-        component={() => <ScriptsUpload type="testing" />}
+        element={<ScriptsUpload type="testing" />}
       />
-      <Route exact path={settingsURLs.dhcp.index} component={DhcpList} />
-      <Route exact path={settingsURLs.dhcp.add} component={DhcpAdd} />
+      <Route path={settingsURLs.dhcp.index} element={DhcpList} />
+      <Route path={settingsURLs.dhcp.add} element={DhcpAdd} />
+      <Route path={settingsURLs.dhcp.edit(null, true)} element={DhcpEdit} />
       <Route
-        exact
-        path={settingsURLs.dhcp.edit(null, true)}
-        component={DhcpEdit}
-      />
-      <Route
-        exact
         path={settingsURLs.repositories.index}
-        component={RepositoriesList}
+        children={RepositoriesList}
       />
       <Route
-        exact
         path={settingsURLs.repositories.add(null, true)}
-        component={RepositoryAdd}
+        children={RepositoryAdd}
       />
       <Route
-        exact
         path={settingsURLs.repositories.edit(null, true)}
-        component={RepositoryEdit}
+        children={RepositoryEdit}
       />
-      <Route exact path={settingsURLs.images.windows} component={Windows} />
-      <Route exact path={settingsURLs.images.vmware} component={VMWare} />
-      <Route
-        exact
-        path={settingsURLs.images.ubuntu}
-        component={ThirdPartyDrivers}
-      />
-      <Route path="*" component={NotFound} />
-    </Switch>
+      <Route path={settingsURLs.images.windows} children={Windows} />
+      <Route path={settingsURLs.images.vmware} children={VMWare} />
+      <Route path={settingsURLs.images.ubuntu} children={ThirdPartyDrivers} />
+      <Route path="*" children={NotFound} />
+    </Routes>
   );
 };
 
-export default Routes;
+export default SettingsRoutes;

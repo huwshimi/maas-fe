@@ -1,20 +1,20 @@
-import { Route, Switch } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 
 import ControllerList from "./ControllerList";
 
 import NotFound from "app/base/views/NotFound";
 import controllersURLs from "app/controllers/urls";
+import { getRelativeRoute } from "app/utils";
 
 const Controllers = (): JSX.Element => {
   return (
-    <Switch>
+    <Routes>
       <Route
-        exact
-        path={controllersURLs.controllers.index}
-        component={() => <ControllerList />}
+        path={getRelativeRoute(controllersURLs.controllers)}
+        element={<ControllerList />}
       />
-      <Route path="*" component={() => <NotFound />} />
-    </Switch>
+      <Route path="*" element={<NotFound />} />
+    </Routes>
   );
 };
 

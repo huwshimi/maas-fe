@@ -2,7 +2,7 @@ import { useEffect } from "react";
 
 import { Button, Icon, Tooltip } from "@canonical/react-components";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useHistory } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import SyncedImages from "app/images/views/ImageList/SyncedImages";
 import IntroCard from "app/intro/components/IntroCard";
@@ -13,7 +13,7 @@ import bootResourceSelectors from "app/store/bootresource/selectors";
 
 const ImagesIntro = (): JSX.Element => {
   const dispatch = useDispatch();
-  const history = useHistory();
+  const navigate = useNavigate();
   const ubuntu = useSelector(bootResourceSelectors.ubuntu);
   const resources = useSelector(bootResourceSelectors.resources);
 
@@ -42,7 +42,7 @@ const ImagesIntro = (): JSX.Element => {
           data-testid="images-intro-continue"
           disabled={incomplete}
           hasIcon
-          onClick={() => history.push({ pathname: introURLs.success })}
+          onClick={() => navigate({ pathname: introURLs.success })}
         >
           Continue
           {incomplete && (

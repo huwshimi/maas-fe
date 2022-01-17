@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { useDispatch, useSelector } from "react-redux";
-import { Redirect, Route, Switch } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 
 import DeviceConfiguration from "./DeviceConfiguration";
 import DeviceDetailsHeader from "./DeviceDetailsHeader";
@@ -17,7 +17,7 @@ import { actions as deviceActions } from "app/store/device";
 import deviceSelectors from "app/store/device/selectors";
 import { DeviceMeta } from "app/store/device/types";
 import type { RootState } from "app/store/root/types";
-import { isId } from "app/utils";
+import { getRelativeRoute, isId } from "app/utils";
 
 const DeviceDetails = (): JSX.Element => {
   const dispatch = useDispatch();
@@ -64,27 +64,26 @@ const DeviceDetails = (): JSX.Element => {
       }
     >
       {device && (
-        <Switch>
+        <Routes>
           <Route
-            exact
-            path={deviceURLs.device.summary(null, true)}
-            component={() => <DeviceSummary systemId={id} />}
-          />
-          <Route
-            exact
-            path={deviceURLs.device.network(null, true)}
-            component={() => <DeviceNetwork systemId={id} />}
+            path={getRelativeRoute(deviceURLs.device, "summary")}
+            element={<DeviceSummary systemId={id} />}
           />
           <Route
-            exact
-            path={deviceURLs.device.configuration(null, true)}
-            component={() => <DeviceConfiguration systemId={id} />}
+            path={getRelativeRoute(deviceURLs.device, "network")}
+            element={<DeviceNetwork systemId={id} />}
           />
-          <Redirect
-            from={deviceURLs.device.index(null, true)}
-            to={deviceURLs.device.summary(null, true)}
+          <Route
+            path={getRelativeRoute(deviceURLs.device, "configuration")}
+            element={<DeviceConfiguration systemId={id} />}
           />
-        </Switch>
+          <Route
+            path={getRelativeRoute(deviceURLs.device)}
+            element={
+              <Navigate replace to={deviceURLs.device.summary({ id })} />
+            }
+          ></Route>
+        </Routes>
       )}
     </Section>
   );

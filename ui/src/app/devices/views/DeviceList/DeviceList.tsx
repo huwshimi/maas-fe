@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 
 import { useDispatch, useSelector } from "react-redux";
-import { useHistory, useLocation } from "react-router";
+import { useNavigate, useLocation } from "react-router";
 
 import DeviceListControls from "./DeviceListControls";
 import DeviceListHeader from "./DeviceListHeader";
@@ -17,7 +17,7 @@ import type { RootState } from "app/store/root/types";
 
 const DeviceList = (): JSX.Element => {
   const dispatch = useDispatch();
-  const history = useHistory();
+  const navigate = useNavigate();
   const location = useLocation();
   const currentFilters = FilterDevices.queryStringToFilters(location.search);
   const [headerContent, setHeaderContent] =
@@ -42,9 +42,9 @@ const DeviceList = (): JSX.Element => {
     (searchText) => {
       setFilter(searchText);
       const filters = FilterDevices.getCurrentFilters(searchText);
-      history.push({ search: FilterDevices.filtersToQueryString(filters) });
+      navigate({ search: FilterDevices.filtersToQueryString(filters) });
     },
-    [history, setFilter]
+    [navigate, setFilter]
   );
 
   return (

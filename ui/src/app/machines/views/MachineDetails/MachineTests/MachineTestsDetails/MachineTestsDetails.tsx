@@ -59,7 +59,7 @@ const MachineTestsDetails = (): JSX.Element | null => {
     return <h4 data-testid="not-found">Script result could not be found.</h4>;
   }
 
-  if (result) {
+  if (id && result) {
     const hasMetrics = result.results.length > 0;
     return (
       <>

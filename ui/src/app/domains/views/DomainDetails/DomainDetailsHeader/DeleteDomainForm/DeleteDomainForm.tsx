@@ -48,7 +48,7 @@ const DeleteDomainForm = ({ closeForm, id }: Props): JSX.Element | null => {
         dispatch(cleanup());
         dispatch(domainActions.delete(id));
       }}
-      savedRedirect={domainsURLs.domains}
+      savedRedirect={domainsURLs.domains.index}
       saved={saved}
       saving={saving}
       submitAppearance="negative"

@@ -1,16 +1,16 @@
-import { Route, Switch } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 
 import NotFound from "app/base/views/NotFound";
 import subnetsURLs from "app/subnets/urls";
 import SubnetsList from "app/subnets/views/SubnetsList";
 
-const Routes = (): JSX.Element => {
+const SubnetsRoutes = (): JSX.Element => {
   return (
-    <Switch>
-      <Route exact path={subnetsURLs.index} component={SubnetsList} />
-      <Route path="*" component={NotFound} />
-    </Switch>
+    <Routes>
+      <Route path={subnetsURLs.index} children={SubnetsList} />
+      <Route path="*" children={NotFound} />
+    </Routes>
   );
 };
 
-export default Routes;
+export default SubnetsRoutes;

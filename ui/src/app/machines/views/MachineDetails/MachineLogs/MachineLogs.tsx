@@ -55,19 +55,17 @@ const MachineNetwork = ({ systemId }: Props): JSX.Element => {
         <DownloadMenu systemId={systemId} />
       </div>
       <Route
-        exact
         path={machineURLs.machine.logs.installationOutput(null, true)}
-        component={() => <InstallationOutput systemId={systemId} />}
+        element={<InstallationOutput systemId={systemId} />}
       />
       {[
         machineURLs.machine.logs.index(null, true),
         machineURLs.machine.logs.events(null, true),
       ].map((path) => (
         <Route
-          exact
           key={path}
           path={path}
-          component={() => <EventLogs systemId={systemId} />}
+          element={<EventLogs systemId={systemId} />}
         />
       ))}
     </>

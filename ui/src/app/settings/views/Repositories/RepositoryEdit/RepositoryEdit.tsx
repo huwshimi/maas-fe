@@ -30,7 +30,7 @@ export const RepositoryEdit = (): JSX.Element => {
   if (loading) {
     return <Spinner text="Loading..." />;
   }
-  if (loaded && !repository) {
+  if ((loaded && !repository) || !type) {
     return <h4>Repository not found</h4>;
   }
   return <RepositoryForm type={type} repository={repository} />;

@@ -41,7 +41,11 @@ const DomainDetails = (): JSX.Element => {
 
   if (!isId(id) || (!domainsLoading && !domain)) {
     return (
-      <ModelNotFound id={id} linkURL={domainURLs.domains} modelName="domain" />
+      <ModelNotFound
+        id={id}
+        linkURL={domainURLs.domains.index}
+        modelName="domain"
+      />
     );
   }
   return (

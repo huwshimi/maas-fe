@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { useDispatch, useSelector } from "react-redux";
-import { Redirect, Route, Switch, useLocation } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 
 import MachineComissioning from "./MachineCommissioning";
 import MachineConfiguration from "./MachineConfiguration";
@@ -80,100 +80,80 @@ const MachineDetails = (): JSX.Element => {
       }
     >
       {machine && (
-        <Switch>
+        <Routes>
           <Route
-            exact
             path={machineURLs.machine.summary(null, true)}
-            component={() => (
+            element={
               <>
                 <SummaryNotifications id={id} />
                 <MachineSummary setHeaderContent={setHeaderContent} />
               </>
-            )}
+            }
           />
           <Route
-            exact
             path={machineURLs.machine.instances(null, true)}
-            component={() => <MachineInstances />}
+            element={<MachineInstances />}
           />
           <Route
-            exact
             path={machineURLs.machine.network(null, true)}
-            component={() => (
+            element={
               <>
                 <NetworkNotifications id={id} />
                 <MachineNetwork id={id} setHeaderContent={setHeaderContent} />
               </>
-            )}
+            }
           />
           <Route
-            exact
             path={machineURLs.machine.storage(null, true)}
-            component={() => (
+            element={
               <>
                 <StorageNotifications id={id} />
                 <MachineStorage />
               </>
-            )}
+            }
           />
           <Route
-            exact
             path={machineURLs.machine.pciDevices(null, true)}
-            component={() => (
-              <MachinePCIDevices setHeaderContent={setHeaderContent} />
-            )}
+            element={<MachinePCIDevices setHeaderContent={setHeaderContent} />}
           />
           <Route
-            exact
             path={machineURLs.machine.usbDevices(null, true)}
-            component={() => (
-              <MachineUSBDevices setHeaderContent={setHeaderContent} />
-            )}
+            element={<MachineUSBDevices setHeaderContent={setHeaderContent} />}
           />
           <Route
-            exact
             path={machineURLs.machine.commissioning.index(null, true)}
-            component={() => <MachineComissioning />}
+            element={<MachineComissioning />}
           />
           <Route
-            exact
             path={machineURLs.machine.commissioning.scriptResult(null, true)}
-            component={() => <MachineTestsDetails />}
+            element={<MachineTestsDetails />}
           />
           <Route
-            exact
             path={machineURLs.machine.testing.index(null, true)}
-            component={() => <MachineTests />}
+            element={<MachineTests />}
           />
           <Route
-            exact
             path={machineURLs.machine.testing.scriptResult(null, true)}
-            component={() => <MachineTestsDetails />}
+            element={<MachineTestsDetails />}
           />
           <Route
             path={machineURLs.machine.logs.index(null, true)}
-            component={() => <MachineLogs systemId={id} />}
+            element={<MachineLogs systemId={id} />}
           />
+          <Route path={machineURLs.machine.events(null, true)}>
+            <Navigate
+              replace
+              to={machineURLs.machine.logs.events(null, true)}
+            />
+          </Route>
           <Route
-            exact
-            path={machineURLs.machine.events(null, true)}
-            component={() => (
-              <Redirect to={machineURLs.machine.logs.events(null, true)} />
-            )}
-          />
-          <Route
-            exact
             path={machineURLs.machine.configuration(null, true)}
-            component={() => <MachineConfiguration />}
+            element={<MachineConfiguration />}
           />
-          <Route
-            exact
-            path={machineURLs.machine.index(null, true)}
-            component={() => (
-              <Redirect to={machineURLs.machine.summary({ id })} />
-            )}
-          />
-        </Switch>
+          <Route path={machineURLs.machine.index(null, true)}>
+            <Navigate replace to={machineURLs.machine.summary({ id })} />
+          </Route>
+        </Routes>
       )}
     </Section>
   );

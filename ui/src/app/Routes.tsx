@@ -1,4 +1,9 @@
-import { Redirect, Route, Switch } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
+
+import DeviceDetails from "./devices/views/DeviceDetails";
+import DeviceList from "./devices/views/DeviceList";
+import DomainDetails from "./domains/views/DomainDetails";
+import DomainsList from "./domains/views/DomainsList";
 
 import ErrorBoundary from "app/base/components/ErrorBoundary";
 import baseURLs from "app/base/urls";
@@ -8,9 +13,7 @@ import Controllers from "app/controllers/views/Controllers";
 import dashboardURLs from "app/dashboard/urls";
 import Dashboard from "app/dashboard/views/Dashboard";
 import devicesURLs from "app/devices/urls";
-import Devices from "app/devices/views/Devices";
 import domainsURLs from "app/domains/urls";
-import Domains from "app/domains/views/Domains";
 import imagesURLs from "app/images/urls";
 import Images from "app/images/views/Images";
 import introURLs from "app/intro/urls";
@@ -30,140 +33,140 @@ import Subnets from "app/subnets/views/Subnets";
 import zonesURLs from "app/zones/urls";
 import Zones from "app/zones/views/Zones";
 
-const Routes = (): JSX.Element => (
-  <Switch>
+const AppRoutes = (): JSX.Element => (
+  <Routes>
     <Route
-      exact
-      path={baseURLs.index}
-      component={() => <Redirect to={machineURLs.machines.index} />}
+      path={`${baseURLs.index}/*`}
+      element={<Navigate replace to={machineURLs.machines.index} />}
     />
     <Route
-      path={introURLs.index}
-      component={() => (
+      path={`${introURLs.index}/*`}
+      element={
         <ErrorBoundary>
           <Intro />
         </ErrorBoundary>
-      )}
+      }
     />
     <Route
-      path={prefsURLs.prefs}
-      component={() => (
+      path={`${prefsURLs.prefs}/*`}
+      element={
         <ErrorBoundary>
           <Preferences />
         </ErrorBoundary>
-      )}
+      }
     />
     <Route
-      path={controllersURLs.controllers.index}
-      component={() => (
+      path={`${controllersURLs.controllers.index}/*`}
+      element={
         <ErrorBoundary>
           <Controllers />
         </ErrorBoundary>
-      )}
+      }
     />
-    {[devicesURLs.devices.index, devicesURLs.device.index(null, true)].map(
-      (path) => (
-        <Route
-          key={path}
-          path={path}
-          component={() => (
-            <ErrorBoundary>
-              <Devices />
-            </ErrorBoundary>
-          )}
-        />
-      )
-    )}
-    {[domainsURLs.domains, domainsURLs.details(null, true)].map((path) => (
-      <Route
-        exact
-        key={path}
-        path={path}
-        component={() => (
-          <ErrorBoundary>
-            <Domains />
-          </ErrorBoundary>
-        )}
-      />
-    ))}
     <Route
-      path={imagesURLs.index}
-      component={() => (
+      path={`${devicesURLs.devices.index}/*`}
+      element={
+        <ErrorBoundary>
+          <DeviceList />
+        </ErrorBoundary>
+      }
+    />
+    <Route
+      path={`${devicesURLs.device.index(null, true)}/*`}
+      element={
+        <ErrorBoundary>
+          <DeviceDetails />
+        </ErrorBoundary>
+      }
+    />
+    <Route
+      path={`${domainsURLs.domains.index}/*`}
+      element={
+        <ErrorBoundary>
+          <DomainsList />
+        </ErrorBoundary>
+      }
+    />
+    <Route
+      path={`${domainsURLs.domain.index(null, true)}/*`}
+      element={
+        <ErrorBoundary>
+          <DomainDetails />
+        </ErrorBoundary>
+      }
+    />
+    <Route
+      path={`${imagesURLs.index}/*`}
+      element={
         <ErrorBoundary>
           <Images />
         </ErrorBoundary>
-      )}
+      }
     />
     <Route
-      path={kvmURLs.kvm}
-      component={() => (
+      path={`${kvmURLs.index}/*`}
+      element={
         <ErrorBoundary>
           <KVM />
         </ErrorBoundary>
-      )}
+      }
     />
-    <Route
-      path={machineURLs.machines.index}
-      component={() => (
-        <ErrorBoundary>
-          <Machines />
-        </ErrorBoundary>
-      )}
-    />
-    <Route
-      path={machineURLs.machine.index(null, true)}
-      component={() => (
-        <ErrorBoundary>
-          <MachineDetails />
-        </ErrorBoundary>
-      )}
-    />
-    <Route
-      path={poolsURLs.pools}
-      component={() => (
-        <ErrorBoundary>
-          <Machines />
-        </ErrorBoundary>
-      )}
-    />
-    <Route
-      path={settingsURLs.index}
-      component={() => (
-        <ErrorBoundary>
-          <Settings />
-        </ErrorBoundary>
-      )}
-    />
-    <Route
-      path={subnetsURLs.index}
-      component={() => (
-        <ErrorBoundary>
-          <Subnets />
-        </ErrorBoundary>
-      )}
-    />
-    {[zonesURLs.index, zonesURLs.details(null, true)].map((path) => (
+    {[machineURLs.machines.index, poolsURLs.index].map((path) => (
       <Route
-        exact
         key={path}
-        path={path}
-        component={() => (
+        path={`${path}/*`}
+        element={
           <ErrorBoundary>
-            <Zones />
+            <Machines />
           </ErrorBoundary>
-        )}
+        }
       />
     ))}
     <Route
-      path={dashboardURLs.index}
-      component={() => (
+      path={`${machineURLs.machine.index(null, true)}/*`}
+      element={
+        <ErrorBoundary>
+          <MachineDetails />
+        </ErrorBoundary>
+      }
+    />
+    <Route
+      path={`${settingsURLs.index}/*`}
+      element={
+        <ErrorBoundary>
+          <Settings />
+        </ErrorBoundary>
+      }
+    />
+    <Route
+      path={`${subnetsURLs.index}/*`}
+      element={
+        <ErrorBoundary>
+          <Subnets />
+        </ErrorBoundary>
+      }
+    />
+    {[zonesURLs.index, zonesURLs.details(null, true)].map((path) => (
+      <Route
+        key={path}
+        path={`${path}/*`}
+        element={
+          <ErrorBoundary>
+            <Zones />
+          </ErrorBoundary>
+        }
+      />
+    ))}
+    <Route
+      path={`${dashboardURLs.index}/*`}
+      element={
         <ErrorBoundary>
           <Dashboard />
         </ErrorBoundary>
-      )}
+      }
     />
-    <Route path="*" component={() => <NotFound includeSection />} />
-  </Switch>
+    <Route path="*" element={<NotFound includeSection />} />
+  </Routes>
 );
 
-export default Routes;
+export default AppRoutes;

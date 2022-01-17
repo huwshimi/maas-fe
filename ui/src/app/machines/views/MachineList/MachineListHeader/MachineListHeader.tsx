@@ -78,7 +78,7 @@ export const MachineListHeader = ({
         />,
       ];
     }
-    if (location.pathname === poolsURLs.pools) {
+    if (location.pathname === poolsURLs.index) {
       return [
         <Button data-testid="add-pool" element={Link} to={poolsURLs.add}>
           Add pool
@@ -118,10 +118,10 @@ export const MachineListHeader = ({
           to: machineURLs.machines.index,
         },
         {
-          active: location.pathname.startsWith(poolsURLs.pools),
+          active: location.pathname.startsWith(poolsURLs.index),
           component: Link,
           label: `${pluralize("Resource pool", resourcePools.length, true)}`,
-          to: poolsURLs.pools,
+          to: poolsURLs.index,
         },
       ]}
       title={getHeaderTitle("Machines", headerContent)}

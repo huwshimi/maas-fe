@@ -74,12 +74,12 @@ const LXDHostToolbar = ({
           <div className="u-nudge-up--x-small u-truncate">
             <Link
               data-testid="settings-link"
+              state={{ from: location.pathname }}
               to={{
                 pathname: kvmURLs.lxd.cluster.host.edit({
                   clusterId,
                   hostId,
                 }),
-                state: { from: location.pathname },
               }}
             >
               <Icon name="settings" />

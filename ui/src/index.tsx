@@ -5,8 +5,8 @@ import { configureStore, getDefaultMiddleware } from "@reduxjs/toolkit";
 import { createBrowserHistory } from "history";
 import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
-import { Router } from "react-router-dom";
 import { createReduxHistoryContext } from "redux-first-history";
+import { HistoryRouter as Router } from "redux-first-history/rr6";
 import createSagaMiddleware from "redux-saga";
 
 import App from "./app/App";
@@ -17,9 +17,7 @@ import WebSocketClient from "./websocket-client";
 
 const { createReduxHistory, routerMiddleware, routerReducer } =
   createReduxHistoryContext({
-    history: createBrowserHistory({
-      basename: generateNewURL(),
-    }),
+    history: createBrowserHistory(),
   });
 
 const reducer = createRootReducer(routerReducer);
@@ -51,7 +49,7 @@ sagaMiddleware.run(rootSaga, websocketClient);
 const Root = (): JSX.Element => {
   return (
     <Provider store={store}>
-      <Router history={history}>
+      <Router basename={generateNewURL()} history={history}>
         <StrictMode>
           <App />
         </StrictMode>

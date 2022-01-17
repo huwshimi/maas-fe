@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import { useSelector } from "react-redux";
-import { Redirect, Route, Switch } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 
 import VirshDetailsHeader from "./VirshDetailsHeader";
 import VirshResources from "./VirshResources";
@@ -31,7 +31,7 @@ const VirshDetails = (): JSX.Element => {
   const redirectURL = useKVMDetailsRedirect(id);
 
   if (redirectURL) {
-    return <Redirect to={redirectURL} />;
+    return <Navigate replace to={redirectURL} />;
   }
   if (!isId(id) || (!loading && !pod)) {
     return (
@@ -53,22 +53,22 @@ const VirshDetails = (): JSX.Element => {
       }
     >
       {pod && (
-        <Switch>
+        <Routes>
           <Route
-            exact
             path={kvmURLs.virsh.details.resources(null, true)}
-            component={() => <VirshResources id={id} />}
+            element={<VirshResources id={id} />}
           />
           <Route
-            exact
             path={kvmURLs.virsh.details.edit(null, true)}
-            component={() => <VirshSettings id={id} />}
+            element={<VirshSettings id={id} />}
           />
-          <Redirect
-            from={kvmURLs.virsh.details.index(null, true)}
-            to={kvmURLs.virsh.details.resources(null, true)}
-          />
-        </Switch>
+          <Route path={kvmURLs.virsh.details.index(null, true)}>
+            <Navigate
+              replace
+              to={kvmURLs.virsh.details.resources(null, true)}
+            />
+          </Route>
+        </Routes>
       )}
     </Section>
   );

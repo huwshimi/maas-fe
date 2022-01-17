@@ -1,6 +1,6 @@
 import { Spinner, Strip } from "@canonical/react-components";
 import { useSelector } from "react-redux";
-import { Redirect } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 
 import { useWindowTitle } from "app/base/hooks";
 import KVMConfigurationCard from "app/kvm/components/KVMConfigurationCard";
@@ -34,7 +34,7 @@ const LXDClusterHostSettings = ({ clusterId, hostId }: Props): JSX.Element => {
   );
 
   if (redirectURL) {
-    return <Redirect to={redirectURL} />;
+    return <Navigate replace to={redirectURL} />;
   }
   if (loading || !isPodDetails(pod)) {
     return <Spinner text="Loading..." />;

@@ -1,6 +1,4 @@
-type Args = {
-  [x: string]: number | string;
-};
+export type ArgPathArgs = Record<string, number | string>;
 
 /**
  * Creates a function to transform a react-router style URL into a full path.
@@ -9,7 +7,7 @@ type Args = {
  * @returns A function to generate the full url or a url string for react-router.
  */
 export const argPath =
-  <A extends Args>(path: string) =>
+  <A extends ArgPathArgs>(path: string) =>
   /**
    *
    * @param args An object of URL parameters. The object keys match the URL

@@ -54,7 +54,7 @@ const DomainsTable = (): JSX.Element => {
       columns: [
         {
           content: (
-            <Link to={domainURLs.details({ id: domain.id })}>
+            <Link to={domainURLs.domain.index({ id: domain.id })}>
               {domain.is_default ? `${domain.name} (default)` : domain.name}
             </Link>
           ),

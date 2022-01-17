@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 
 import { usePrevious } from "@canonical/react-components/dist/hooks";
-import { Route, Switch, useHistory, useLocation } from "react-router-dom";
+import { Route, Routes, useNavigate, useLocation } from "react-router-dom";
 
 import MachineListHeader from "./MachineList/MachineListHeader";
 
@@ -15,9 +15,10 @@ import PoolAdd from "app/pools/views/PoolAdd";
 import PoolEdit from "app/pools/views/PoolEdit";
 import Pools from "app/pools/views/Pools";
 import { FilterMachines } from "app/store/machine/utils";
+import { getRelativeRoute } from "app/utils";
 
 const Machines = (): JSX.Element => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const location = useLocation();
   const currentFilters = FilterMachines.queryStringToFilters(location.search);
   // The filter state is initialised from the URL.
@@ -29,14 +30,15 @@ const Machines = (): JSX.Element => {
   const actionSelected = headerContent?.view[0] === "machineActionForm";
   const previousPath = usePrevious(location.pathname);
   const previousActionSelected = usePrevious(actionSelected);
+  const isShowingMachines = location.pathname === machineURLs.machines.index;
 
   const setSearchFilter = useCallback(
     (searchText) => {
       setFilter(searchText);
       const filters = FilterMachines.getCurrentFilters(searchText);
-      history.push({ search: FilterMachines.filtersToQueryString(filters) });
+      navigate({ search: FilterMachines.filtersToQueryString(filters) });
     },
-    [history, setFilter]
+    [navigate, setFilter]
   );
 
   useEffect(() => {
@@ -70,27 +72,33 @@ const Machines = (): JSX.Element => {
         />
       }
     >
-      <Switch>
-        <Route
-          exact
-          path={machineURLs.machines.index}
-          component={() => (
-            <MachineList
-              headerFormOpen={!!headerContent}
-              searchFilter={searchFilter}
-              setSearchFilter={setSearchFilter}
+      <Routes>
+        {isShowingMachines ? (
+          <Route
+            path={getRelativeRoute(machineURLs.machines)}
+            element={
+              <MachineList
+                headerFormOpen={!!headerContent}
+                searchFilter={searchFilter}
+                setSearchFilter={setSearchFilter}
+              />
+            }
+          />
+        ) : (
+          <>
+            <Route path={getRelativeRoute(poolsURLs)} element={<Pools />} />
+            <Route
+              path={getRelativeRoute(poolsURLs, "add")}
+              element={<PoolAdd />}
             />
-          )}
-        />
-        <Route exact path={poolsURLs.pools} component={() => <Pools />} />
-        <Route exact path={poolsURLs.add} component={() => <PoolAdd />} />
-        <Route
-          exact
-          path={poolsURLs.edit(null, true)}
-          component={() => <PoolEdit />}
-        />
-        <Route path="*" component={() => <NotFound />} />
-      </Switch>
+            <Route
+              path={getRelativeRoute(poolsURLs, "edit")}
+              element={<PoolEdit />}
+            />
+          </>
+        )}
+        <Route path="*" element={<NotFound />} />
+      </Routes>
     </Section>
   );
 };

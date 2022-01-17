@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 
 import { useDispatch, useSelector } from "react-redux";
-import { useHistory, useLocation } from "react-router";
+import { useNavigate, useLocation } from "react-router";
 
 import ControllerListControls from "./ControllerListControls";
 import ControllerListHeader from "./ControllerListHeader";
@@ -17,7 +17,7 @@ import type { RootState } from "app/store/root/types";
 
 const ControllerList = (): JSX.Element => {
   const dispatch = useDispatch();
-  const history = useHistory();
+  const navigate = useNavigate();
   const location = useLocation();
   const currentFilters = FilterControllers.queryStringToFilters(
     location.search
@@ -44,9 +44,9 @@ const ControllerList = (): JSX.Element => {
     (searchText) => {
       setFilter(searchText);
       const filters = FilterControllers.getCurrentFilters(searchText);
-      history.push({ search: FilterControllers.filtersToQueryString(filters) });
+      navigate({ search: FilterControllers.filtersToQueryString(filters) });
     },
-    [history, setFilter]
+    [navigate, setFilter]
   );
 
   return (

@@ -1,4 +1,4 @@
-import { Redirect } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 
 import type { NodeActionFormProps } from "../types";
 
@@ -29,7 +29,7 @@ export const DeleteForm = <E,>({
     processingCount,
   });
   if (deleteComplete && viewingDetails) {
-    return <Redirect data-testid="delete-redirect" to={redirectURL} />;
+    return <Navigate replace data-testid="delete-redirect" to={redirectURL} />;
   }
 
   return (

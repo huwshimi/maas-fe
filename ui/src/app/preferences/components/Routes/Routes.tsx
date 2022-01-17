@@ -1,4 +1,4 @@
-import { Route, Redirect, Switch } from "react-router-dom";
+import { Route, Navigate, Routes } from "react-router-dom";
 
 import NotFound from "app/base/views/NotFound";
 import prefsURLs from "app/preferences/urls";
@@ -11,25 +11,23 @@ import SSHKeyList from "app/preferences/views/SSHKeys/SSHKeyList";
 import AddSSLKey from "app/preferences/views/SSLKeys/AddSSLKey";
 import SSLKeyList from "app/preferences/views/SSLKeys/SSLKeyList";
 
-const Routes = (): JSX.Element => {
+const PreferencesRoutes = (): JSX.Element => {
   return (
-    <Switch>
-      <Redirect exact from={prefsURLs.prefs} to={prefsURLs.details} />
-      <Route exact path={prefsURLs.details} component={Details} />
-      <Route exact path={prefsURLs.apiKeys.index} component={APIKeyList} />
-      <Route exact path={prefsURLs.apiKeys.add} component={APIKeyAdd} />
-      <Route
-        exact
-        path={prefsURLs.apiKeys.edit(null, true)}
-        component={APIKeyEdit}
-      />
-      <Route exact path={prefsURLs.sshKeys.index} component={SSHKeyList} />
-      <Route exact path={prefsURLs.sshKeys.add} component={AddSSHKey} />
-      <Route exact path={prefsURLs.sslKeys.index} component={SSLKeyList} />
-      <Route exact path={prefsURLs.sslKeys.add} component={AddSSLKey} />
-      <Route path="*" component={NotFound} />
-    </Switch>
+    <Routes>
+      <Route path={prefsURLs.prefs}>
+        <Navigate replace to={prefsURLs.details} />
+      </Route>
+      <Route path={prefsURLs.details} children={Details} />
+      <Route path={prefsURLs.apiKeys.index} children={APIKeyList} />
+      <Route path={prefsURLs.apiKeys.add} children={APIKeyAdd} />
+      <Route path={prefsURLs.apiKeys.edit(null, true)} children={APIKeyEdit} />
+      <Route path={prefsURLs.sshKeys.index} children={SSHKeyList} />
+      <Route path={prefsURLs.sshKeys.add} children={AddSSHKey} />
+      <Route path={prefsURLs.sslKeys.index} children={SSLKeyList} />
+      <Route path={prefsURLs.sslKeys.add} children={AddSSLKey} />
+      <Route path="*" children={NotFound} />
+    </Routes>
   );
 };
 
-export default Routes;
+export default PreferencesRoutes;

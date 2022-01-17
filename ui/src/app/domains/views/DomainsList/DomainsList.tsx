@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 
 import { useDispatch, useSelector } from "react-redux";
-import { Route, Switch } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 
 import DomainListHeader from "./DomainListHeader";
 import DomainsTable from "./DomainsTable";
@@ -11,6 +11,7 @@ import { useWindowTitle } from "app/base/hooks";
 import domainsURLs from "app/domains/urls";
 import { actions } from "app/store/domain";
 import domainsSelectors from "app/store/domain/selectors";
+import { getRelativeRoute } from "app/utils";
 
 const DomainsList = (): JSX.Element => {
   const dispatch = useDispatch();
@@ -24,13 +25,12 @@ const DomainsList = (): JSX.Element => {
 
   return (
     <Section header={<DomainListHeader />}>
-      <Switch>
+      <Routes>
         <Route
-          exact
-          path={domainsURLs.domains}
-          component={() => <>{domains.length > 0 && <DomainsTable />}</>}
+          path={getRelativeRoute(domainsURLs.domains)}
+          element={<>{domains.length > 0 && <DomainsTable />}</>}
         />
-      </Switch>
+      </Routes>
     </Section>
   );
 };

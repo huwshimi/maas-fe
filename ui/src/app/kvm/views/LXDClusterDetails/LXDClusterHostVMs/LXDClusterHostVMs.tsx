@@ -1,6 +1,6 @@
 import { Spinner } from "@canonical/react-components";
 import { useSelector } from "react-redux";
-import { Redirect } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 
 import { useWindowTitle } from "app/base/hooks";
 import type { SetSearchFilter } from "app/base/types";
@@ -42,7 +42,7 @@ const LXDClusterHostVMs = ({
   const redirectURL = useKVMDetailsRedirect(hostId);
 
   if (redirectURL) {
-    return <Redirect to={redirectURL} />;
+    return <Navigate replace to={redirectURL} />;
   }
   if (!cluster) {
     return <Spinner text="Loading..." />;

@@ -20,8 +20,7 @@ export function useGetURLId<P extends RouteParams, K extends keyof P>(
   pk: "id" | "system_id",
   key?: K
 ): string | number | null {
-  const params = useParams<P>();
-  const id = params[key || "id"];
+  const { [key || "id"]: id } = useParams<P>();
   if (pk === "system_id") {
     return id || null;
   }

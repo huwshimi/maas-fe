@@ -1,6 +1,6 @@
 import { Spinner, Row, Col, MainTable } from "@canonical/react-components";
 import { useSelector } from "react-redux";
-import { Redirect } from "react-router";
+import { Navigate } from "react-router";
 
 import { useWindowTitle } from "app/base/hooks";
 import { useGetURLId } from "app/base/hooks/urls";
@@ -95,7 +95,10 @@ const MachineInstances = (): JSX.Element => {
 
   if (!isMachineDetails(machine) || machine.devices.length === 0) {
     return (
-      <Redirect to={machineURLs.machine.summary({ id: machine.system_id })} />
+      <Navigate
+        replace
+        to={machineURLs.machine.summary({ id: machine.system_id })}
+      />
     );
   }
 

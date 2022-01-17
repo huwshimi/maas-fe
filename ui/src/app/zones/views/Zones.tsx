@@ -1,4 +1,4 @@
-import { Route, Switch } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 
 import NotFound from "app/base/views/NotFound";
 import zonesURLs from "app/zones/urls";
@@ -7,15 +7,11 @@ import ZonesList from "app/zones/views/ZonesList";
 
 const Zones = (): JSX.Element => {
   return (
-    <Switch>
-      <Route exact path={zonesURLs.index} component={() => <ZonesList />} />
-      <Route
-        exact
-        path={zonesURLs.details(null, true)}
-        component={() => <ZoneDetails />}
-      />
-      <Route path="*" component={() => <NotFound />} />
-    </Switch>
+    <Routes>
+      <Route path={zonesURLs.index} element={<ZonesList />} />
+      <Route path={zonesURLs.details(null, true)} element={<ZoneDetails />} />
+      <Route path="*" element={<NotFound />} />
+    </Routes>
   );
 };
 

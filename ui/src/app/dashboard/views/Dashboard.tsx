@@ -1,6 +1,6 @@
 import { Notification } from "@canonical/react-components";
 import { useSelector } from "react-redux";
-import { Route, Switch } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 
 import DashboardConfigurationForm from "./DashboardConfigurationForm";
 import DashboardHeader from "./DashboardHeader";
@@ -12,6 +12,7 @@ import NotFound from "app/base/views/NotFound";
 import dashboardURLs from "app/dashboard/urls";
 import authSelectors from "app/store/auth/selectors";
 import configSelectors from "app/store/config/selectors";
+import { getRelativeRoute } from "app/utils";
 
 const Dashboard = (): JSX.Element => {
   const networkDiscovery = useSelector(configSelectors.networkDiscovery);
@@ -34,19 +35,17 @@ const Dashboard = (): JSX.Element => {
           List of devices will not update as discovery is turned off.
         </Notification>
       )}
-      <Switch>
+      <Routes>
         <Route
-          exact
-          path={dashboardURLs.index}
-          component={() => <DiscoveriesList />}
+          path={getRelativeRoute(dashboardURLs)}
+          element={<DiscoveriesList />}
         />
         <Route
-          exact
-          path={dashboardURLs.configuration}
-          component={() => <DashboardConfigurationForm />}
+          path={getRelativeRoute(dashboardURLs, "configuration")}
+          element={<DashboardConfigurationForm />}
         />
-        <Route path="*" component={() => <NotFound />} />
-      </Switch>
+        <Route path="*" element={<NotFound />} />
+      </Routes>
     </Section>
   );
 };

@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import { Form, Notification } from "@canonical/react-components";
 import { useFormikContext } from "formik";
 import { useDispatch } from "react-redux";
-import { Redirect } from "react-router";
+import { Navigate } from "react-router-dom";
 
 import type { FormikFormButtonsProps } from "app/base/components/FormikFormButtons";
 import FormikFormButtons from "app/base/components/FormikFormButtons";
@@ -148,7 +148,7 @@ const FormikFormContent = <V, E = null>({
   }, [cleanup, dispatch]);
 
   if (savedRedirect && saved) {
-    return <Redirect to={savedRedirect} />;
+    return <Navigate replace to={savedRedirect} />;
   }
 
   return (

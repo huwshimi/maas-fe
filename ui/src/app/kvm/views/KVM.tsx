@@ -1,4 +1,4 @@
-import { Route, Switch } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 
 import KVMList from "./KVMList";
 import LXDClusterDetails from "./LXDClusterDetails";
@@ -7,57 +7,32 @@ import VirshDetails from "./VirshDetails";
 
 import NotFound from "app/base/views/NotFound";
 import kvmURLs from "app/kvm/urls";
+import { getRelativeRoute } from "app/utils";
 
 const KVM = (): JSX.Element => {
   return (
-    <Switch>
-      {[kvmURLs.kvm, kvmURLs.lxd.index, kvmURLs.virsh.index].map((path) => (
-        <Route exact key={path} path={path} component={() => <KVMList />} />
-      ))}
+    <Routes>
       {[
-        kvmURLs.lxd.cluster.index(null, true),
-        kvmURLs.lxd.cluster.edit(null, true),
-        kvmURLs.lxd.cluster.host.edit(null, true),
-        kvmURLs.lxd.cluster.host.index(null, true),
-        kvmURLs.lxd.cluster.hosts(null, true),
-        kvmURLs.lxd.cluster.resources(null, true),
-        kvmURLs.lxd.cluster.vms.host(null, true),
-        kvmURLs.lxd.cluster.vms.index(null, true),
+        getRelativeRoute(kvmURLs),
+        getRelativeRoute(kvmURLs.lxd),
+        getRelativeRoute(kvmURLs.virsh),
       ].map((path) => (
-        <Route
-          exact
-          key={path}
-          path={path}
-          component={() => <LXDClusterDetails />}
-        />
+        <Route key={path} path={path} element={<KVMList />} />
       ))}
-      {[
-        kvmURLs.lxd.single.index(null, true),
-        kvmURLs.lxd.single.edit(null, true),
-        kvmURLs.lxd.single.resources(null, true),
-        kvmURLs.lxd.single.vms(null, true),
-      ].map((path) => (
-        <Route
-          exact
-          key={path}
-          path={path}
-          component={() => <LXDSingleDetails />}
-        />
-      ))}
-      {[
-        kvmURLs.virsh.details.index(null, true),
-        kvmURLs.virsh.details.edit(null, true),
-        kvmURLs.virsh.details.resources(null, true),
-      ].map((path) => (
-        <Route
-          exact
-          key={path}
-          path={path}
-          component={() => <VirshDetails />}
-        />
-      ))}
-      <Route path="*" component={() => <NotFound />} />
-    </Switch>
+      <Route
+        path={`${getRelativeRoute(kvmURLs.lxd.cluster)}/*`}
+        element={<LXDClusterDetails />}
+      />
+      <Route
+        path={`${getRelativeRoute(kvmURLs.lxd.single)}/*`}
+        element={<LXDSingleDetails />}
+      />
+      <Route
+        path={`${getRelativeRoute(kvmURLs.virsh.details)}/*`}
+        element={<VirshDetails />}
+      />
+      <Route path="*" element={<NotFound />} />
+    </Routes>
   );
 };
 

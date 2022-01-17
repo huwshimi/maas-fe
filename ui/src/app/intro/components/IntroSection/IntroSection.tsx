@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
 import { Notification, Spinner } from "@canonical/react-components";
-import { Redirect } from "react-router";
+import { Navigate } from "react-router";
 
 import Section from "app/base/components/Section";
 import type { Props as SectionProps } from "app/base/components/Section/Section";
@@ -36,7 +36,7 @@ const IntroSection = ({
   useWindowTitle(windowTitle ? `Welcome - ${windowTitle}` : "Welcome");
 
   if (shouldExitIntro) {
-    return <Redirect to={exitURL} />;
+    return <Navigate replace to={exitURL} />;
   }
 
   return (
